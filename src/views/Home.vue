@@ -6,18 +6,14 @@
         <v-img width="50%" style="margin: 3px;" :src="logoJcrim"></v-img>
         <v-card-text style="cursor:default" class="py-2 font-weight-black">
           <h1 class="pa-3">UNIDAD DE CRIMINALÍSTICA</h1>
-          <h2>UTILITARIOS</h2>
+          <h2 class="pa-3">TURNOS PARA PERICIAS</h2>
+          <h1>AUDIO, VIDEO Y AFINES</h1>
         </v-card-text>
         <br>
         <v-card-text>
-          <v-btn  @click="goTo('Oficios')" class="mb-4 pa-8" block color="green" size="x-large">
-            <h2>NRO. OFICIO</h2>
-          </v-btn>
-          <v-btn @click="goTo('Datos')" class="mb-4 pa-8" disabled block color="green" size="x-large">
-            <h2>DATOS</h2>
-          </v-btn>
-          <v-btn @click="goTo('Gestion')" class="mb-4 pa-8" disabled block color="green" size="x-large">
-            <h2>GESTIÓN</h2>
+          <v-text-field style="font-size: x-large;" class="centered-input" v-model="user" variant="outlined" label="Identificacion" outlined></v-text-field>
+          <v-btn  @click="goTo('Agenda')" class="mb-4 pa-8" block color="green" size="x-large">
+            <h2>INGRESAR</h2>
           </v-btn>
         </v-card-text>
       </v-card>
@@ -32,6 +28,7 @@ export default {
   data() {
     return {
       logoJcrim: require("@/assets/default/imgJcrim.png"),
+user:""
     };
   },
   mounted() {
@@ -78,6 +75,9 @@ export default {
 </script>
 
 <style scoped>
+.centered-input >>> input {
+  text-align: center
+}
 .centerFull {
   display: flex;
   flex-direction: column;

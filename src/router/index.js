@@ -77,60 +77,12 @@ const routes = [
     meta: { auth: false }
   },
   {
-    path: '/nroofices',
-    name: 'Oficios',
-    component: () => import(/* webpackChunkName: "nroofices" */ '../views/NroOffices.vue'),
-    meta: { auth: false }
-  },
-  {
-    path: '/products',
-    name: 'Productos',
-    component: () => import(/* webpackChunkName: "products" */ '../views/Products.vue'),
-    meta: { auth: false }
-  },
-  {
-    path: '/training',
-    name: 'Capacitacion',
-    component: () => import(/* webpackChunkName: "training" */ '../views/Inused.vue'),
+    path: '/schedule',
+    name: 'Agenda',
+    component: () => import(/* webpackChunkName: "Schedule" */ '../views/Schedule.vue'),
     meta: { auth: false }
   },
 
-  {
-    path: '/systems',
-    name: 'Sistemas',
-    component: () => import(/* webpackChunkName: "systems" */ '../views/Inused.vue'),
-    meta: { auth: false }
-  },
-  {
-    path: '/platforms',
-    name: 'Plataformas',
-    component: () => import(/* webpackChunkName: "products" */ '../views/Inused.vue'),
-    meta: { auth: false }
-  },
-  {
-    path: '/aplications',
-    name: 'Aplicaciones',
-    component: () => import(/* webpackChunkName: "products" */ '../views/Inused.vue'),
-    meta: { auth: false }
-  },
-  {
-    path: '/marketing',
-    name: 'Marketing',
-    component: () => import(/* webpackChunkName: "products" */ '../views/Inused.vue'),
-    meta: { auth: false }
-  },
-  {
-    path: '/equipment',
-    name: 'Equipos',
-    component: () => import(/* webpackChunkName: "products" */ '../views/Equip.vue'),
-    meta: { auth: false }
-  },
-  {
-    path: '/maintenance',
-    name: 'Mantenimiento',
-    component: () => import(/* webpackChunkName: "business" */ '../views/Inused.vue'),
-    meta: { auth: false }
-  },
   {
     path: "*",
     name: '*',

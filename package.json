@@ -12,6 +12,7 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@mdi/font": "^7.3.67",
     "axios": "^0.19.2",
     "core-js": "^3.9.1",
     "moment-timezone": "^0.5.33",
