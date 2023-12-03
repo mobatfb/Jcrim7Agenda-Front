@@ -1,210 +1,150 @@
 <template>
-  <div class="ma-1">
-    <h4 class="ml-5">AGENDA</h4>
+  <div>
     <center>
-      <v-row name="YEAR SHOW">
-        <v-col></v-col>
-        <v-col>
-          <v-btn :disabled="this.state.year == this.stateLimitBack.year" style="float: right;" x-small
-            @click="state.year--; state.month = 1" rounded :color="$color.primary">
-            <v-icon> mdi-arrow-left </v-icon>
-          </v-btn>
-
-        </v-col>
-        <v-col>
-          <h3>
-            {{ state.year }}</h3>
-        </v-col>
-        <v-col>
-          <v-btn :disabled="this.state.year == this.stateLimitNext.year" style="float: left"
-            @click="state.year++; state.month = 1" rounded x-small :color="$color.primary">
-            <v-icon> mdi-arrow-right </v-icon>
-          </v-btn>
-        </v-col>
-        <v-col></v-col>
-
-      </v-row>
-      <v-row name="MONTH SHOW">
-        <v-col></v-col>
-        <v-col>
-          <v-btn style="float: right;"
-            :disabled="this.state.year == this.stateLimitBack.year && this.state.month == this.stateLimitBack.month"
-            @click="btnMonthBack()" rounded x-small :color="$color.primary">
-            <v-icon> mdi-arrow-left </v-icon>
-          </v-btn>
-
-        </v-col>
-        <v-col>
-          <h3>
-            {{ calendar[state.year][state.month - 1].month }}</h3>
-        </v-col>
-        <v-col>
-          <v-btn style="float: left"
-            :disabled="this.state.year == this.stateLimitNext.year && this.state.month == this.stateLimitNext.month"
-            @click="btnMonthNext()" rounded x-small :color="$color.primary">
-            <v-icon> mdi-arrow-right </v-icon>
-          </v-btn>
-        </v-col>
-        <v-col></v-col>
-      </v-row>
-      <br>
-      <br>
-      <br>
-      <table class=tableMy style="cursor: default" border=1 cellspacing=0 cellpadding=0 width=1300>
+      <table style="margin-bottom: 3px;border:solid .5pt;">
+        <table name="YEAR" cellspacing=0 cellpadding=0 style='margin-bottom: 5px; border-collapse:collapse;'>
+          <tr>
+            <td>
+              <v-btn :disabled="this.state.year == this.stateLimitBack.year" small @click="state.year--; state.month = 1"
+                rounded :color="$color.primary">
+                <v-icon> mdi-arrow-left </v-icon>
+              </v-btn>
+            </td>
+            <td width=200>
+              <p align=center style='margin:0cm;text-align:center;'>{{ state.year }}</p>
+            </td>
+            <td>
+              <v-btn :disabled="this.state.year == this.stateLimitNext.year" @click="state.year++; state.month = 1"
+                rounded small :color="$color.primary">
+                <v-icon> mdi-arrow-right </v-icon>
+              </v-btn>
+            </td>
+          </tr>
+        </table>
+        <table name="MONTH" cellspacing=0 cellpadding=0>
+          <tr>
+            <td>
+              <v-btn style="float: right;"
+                :disabled="this.state.year == this.stateLimitBack.year && this.state.month == this.stateLimitBack.month"
+                @click="btnMonthBack()" rounded small :color="$color.primary">
+                <v-icon> mdi-arrow-left </v-icon>
+              </v-btn>
+            </td>
+            <td width=200>
+              <p align=center style='margin:0cm;text-align:center;'> {{ calendar[state.year][state.month - 1].month }}</p>
+            </td>
+            <td>
+              <v-btn style="float: left"
+                :disabled="this.state.year == this.stateLimitNext.year && this.state.month == this.stateLimitNext.month"
+                @click="btnMonthNext()" rounded small :color="$color.primary">
+                <v-icon> mdi-arrow-right </v-icon>
+              </v-btn>
+            </td>
+          </tr>
+        </table>
+      </table>
+      <table name="SCHEDULE" class=tableMy style="cursor: default" border=1 cellspacing=0 cellpadding=0 width=95%>
         <tr name="headerDaysWeek">
-          <td v-for="day in daysWeek" :key="day" width=1000 class="tdMy">
-            <h3 align=center>{{ day }}</h3>
+          <td v-for="day in daysWeek" :key="'Day:' + day" width=1000 class="tdMy" style="background-color: yellow;">
+            <p style="margin: 0cm; font-size:small;" align=center><b>{{ day }}</b></p>
           </td>
         </tr>
-        <tr name="campo1">
+        <tr v-for="colsS in 5" :key="'colsS:' + colsS" :name="'colsS:' + colsS">
           <td>
-            <table border=1 cellspacing=0 cellpadding=0 style='width: 98%; margin: 2px; border-collapse:collapse;'>
-              <tr >
-                <td colspan=2>
-                  <h3 align=center>1</h3>
+            <table border=1 cellspacing=0 cellpadding=0 style='border-collapse:collapse; margin: 2px; width: 98%'>
+              <tr v-for="hour in hours" :key="'hour:' + hour" :name="'hour:' + hour">
+                <td v-if="hour == '09:00 - 10:00'" rowspan=4>
+                  <p align=center style='margin-bottom:0cm;text-align:center'>1</p>
                 </td>
-              </tr>
-              <tr>
-                <td style=';border:solid 1.0pt'>
-                  <h3 align=center>09:00 - 10:00</h3>
-                </td>
-                <td  style='background:#00B050;border:solid 1.0pt'>
-                  <h3 style="cursor: pointer;" @click="addCite('DISP')" align=center>DISPONIBLE</h3>
-                </td>
-              </tr>
-              <tr>
-                <td style=';border:solid 1.0pt;'>
-                  <h3 align=center>11:00 - 12:00</h3>
+
+                <td>
+                  <p style="margin: 0cm; font-size: small" align=center><b>{{ hour }}</b></p>
                 </td>
                 <td style='background:#00B050;border:solid 1.0pt'>
-                  <h3 style="cursor: pointer;" @click="addCite('DISP')" align=center>DISPONIBLE</h3>
+                  <p style="cursor: pointer;margin: 0cm; font-size: small;" align=center @click="selected.dayWeek='xx'+hour;selected.day='xx'+hour;selected.hour=hour; addCite('DISP')">
+                    <b>DISPONIBLE</b>
+                  </p>
                 </td>
-              </tr>
-              <tr>
-                <td style=';border:solid 1.0pt; cursor: default'>
-                  <h3 align=center>14:30 - 15:30</h3>
-                </td>
-                <td style='background:#C00000; border:solid 1.0pt'>
-                  <h3 style="color:white; cursor: pointer;" @click="addCite('OCUP')" align=center>OCUPADO</h3>
-                </td>
-              </tr>
-              <tr>
-                <td style='border:solid 1.0pt;'>
-                  <h3 align=center>16:00 - 17:00</h3>
-                </td>
-                <td style='background:#C00000; border:solid 1.0pt'>
-                  <h3 style="color:white; cursor: pointer;" @click="addCite('OCUP')" align=center>OCUPADO</h3>
-                </td>
+                <!--    <td style='background:#C00000; border:solid 1.0pt'>
+                      <p style="cursor: pointer;margin: 0cm;color:white; cursor: pointer;" @click="addCite('OCUP')"
+                        align=center><b>OCUPADO</b> </p> 
+                    </td> -->
               </tr>
             </table>
           </td>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 1.2</p>
-          </td>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 1.3</p>
-          </td>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 1.4</p>
-          </td>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 1.5</p>
-          </td>
-
-
 
         </tr>
 
-        <tr style='mso-yfti-irow:1;height:74.2pt'>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 2.1</p>
-          </td>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 2.2</p>
-          </td>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 2.3</p>
-          </td>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 2.4</p>
-          </td>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 2.5</p>
-          </td>
-
-        </tr>
-        <tr style='mso-yfti-irow:1;height:74.2pt'>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 3.1</p>
-          </td>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 3.2</p>
-          </td>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 3.3</p>
-          </td>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 3.4</p>
-          </td>
-          <td class="tdMy" width=201 valign=top>
-            <p>HOLA 3.5</p>
-          </td>
-
-        </tr>
       </table>
-
-      <!--  <v-card v-if="cased == ''" name="ASUNTO" class="mx-auto" elevation="1" max-width="500">
-        <v-card-text style="cursor:default" class="py-2 font-weight-black">
-          <h1 class="pa-3">TIPO DE ASUNTO:</h1>
-        </v-card-text>
-        <br>
-        <v-card-text>
-          <v-btn @click="cased = 'fiscal'" class="mb-4 pa-8" block color="green" size="x-large">
-            <h2>FISCAL</h2>
-          </v-btn>
-          <v-btn @click="cased = 'administrativo'" class="mb-4 pa-8" block color="green" size="x-large">
-            <h2>ADMINISTRATIVO</h2>
-          </v-btn>
-          <v-btn @click="cased = 'consulta'" class="mb-4 pa-8" block color="green" size="x-large">
-            <h2>CONSULTA</h2>
-          </v-btn>
-          <v-btn :loading="waiting" @click="getSetting()" class="mb-4 pa-8" block color="green" size="x-large">
-            <h2>AJUSTES</h2>
-          </v-btn>
-        </v-card-text>
-      </v-card>
-      <v-card name="ASUNTO" class="mx-auto" elevation="1" max-width="500">
-        <fiscal v-if="cased == 'fiscal'" @propMethod="Actioncomponents" />
-        <administrativo v-if="cased == 'administrativo'" @propMethod="Actioncomponents" />
-        <consulta v-if="cased == 'consulta'" @propMethod="Actioncomponents" />
-        <v-btn v-if="!cased == ''" @click="cased = ''" class="mb-4 pa-8" text size="large">
-          <h2>VOLVER</h2>
-        </v-btn>
-      </v-card> -->
 
     </center>
     <!-- VENTANA DE AJUSTES EN DIALOGO -->
-    <v-dialog v-model="dialog" persistent width="80%">
+    <v-dialog v-model="dialog" persistent width="600px">
       <v-card>
+        <v-toolbar color="primary" dense>
+          <v-toolbar-title>RESERVAR CITA</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn color="" outlined icon @click="dialog = false">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
         <center>
-          <v-card-title class="text-h5">
-            AJUSTES
-          </v-card-title>
           <v-card-text style="cursor:default" class="py-2 font-weight-black">
-            <h1 class="pa-3">SECUENCIA DE NUMERO DE OFICIO</h1>
+            <h3 class="pa-3">{{ selected.dayWeek}} {{ selected.day}} DE DICIEMBRE 2023 HORA: {{ selected.hour }}</h3>
           </v-card-text>
-          <br>
-          <v-card class="mx-auto" flat max-width="50%">
-
-            <br>
+          <v-card class="mx-auto" flat max-width="90%">
+            <table cellspacing=0 cellpadding=0 style='border-collapse:collapse'>
+              <tr>
+                <td width=141 style='padding-right:5px'>
+                  <p align=right style='margin-bottom:0cm;text-align:right'><b>FISCALÍA:</b></p>
+                </td>
+                <td style='padding:0cm'>
+          <v-select   dense label="SELECCIONAR.." v-model="formReserver.fiscalie" style="margin-bottom: -20px;"
+            :items="fiscalies" :return-object="false" outlined></v-select>
+                </td>
+              </tr>
+              <tr>
+                <td width=141 style='padding-right:5px'>
+                  <p align=right style='margin-bottom:0cm;text-align:right'><b>FISCAL:</b></p>
+                </td>
+                <td style='padding:0cm'>
+          <v-select   dense label="SELECCIONAR.." v-model="formReserver.fiscal" style="margin-bottom: -20px;"
+            :items="fiscals" :return-object="false" outlined></v-select>
+                </td>
+              </tr>  
+              <tr>
+                <td width=141 style='padding-right:5px'>
+                  <p align=right style='margin-bottom:0cm;text-align:right'><b>NÚMERO I.P/I.F:</b></p>
+                </td>
+                <td style='padding:0cm'>
+                  <v-text-field style="margin-bottom: -20px;" dense v-model="formReserver.num" outlined></v-text-field>
+                </td>
+              </tr>
+             
+              <tr>
+                <td width=141 style='padding-right:5px'>
+                  <p align=right style='margin-bottom:0cm;text-align:right'><b>PRESUNTO DELITO:</b></p>
+                </td>
+                <td style='padding:0cm'>
+                  <v-text-field style="margin-bottom: -20px;" dense v-model="formReserver.delit" outlined></v-text-field>
+                </td>
+              </tr>            
+              <tr>
+                <td width=141 style='padding-right:5px'>
+                  <p align=right style='margin-bottom:0cm;text-align:right'><b>EVIDENCIA/INDICIO:</b></p>
+                </td>
+                <td style='padding:0cm'>
+                  <v-text-field style="margin-bottom: -20px;" dense v-model="formReserver.evidence" outlined></v-text-field>
+                </td>
+              </tr> 
+            </table>
             <v-card-text>
               <h1 class="pb-3" style="color:red">{{ sms }}</h1>
               <v-checkbox v-model="sure" label="ESTOY DE ACUERDO CON LA INFORMACIÓN INGRESADA."></v-checkbox>
               <v-btn :disabled="!sure" @click="updateSetting()" class="mb-4 pa-8" block color="green" size="x-large">
                 <h2>GUARDAR</h2>
-              </v-btn>
-              <v-btn :disabled="waiting" @click="dialog = false" class="mb-4 pa-8" text size="large">
-                <h2>VOLVER</h2>
               </v-btn>
             </v-card-text>
           </v-card>
@@ -224,6 +164,34 @@ export default {
       sure: false,
       waiting: false,
       sms: "",
+      selected:{dayWeek:"", day:"", hour:""},
+      fiscalies:["SOLUCIONES RÁPIDAS", "PERSONAS Y GARANTÍAS","PATRIMONIO CIUDADANO", "VIOLENCIA DE GÉNERO", "ADMINISTRACIÓN PÚBLICA", "ADOLESCENTES INFRACTORES", "DELINCUENCIA ORGANIZADA, TRANSNACIONAL E INTERNACIONAL", "FLAGRANCIA", "MULTICOMPETENTE", "DELITOS ACUÁTICOS", "ACCIDENTES DE TRÁNSITO", "OTRO"],
+      fiscals:["Alexander Hernan Apolo Vivanco", "Andrea Lucia Mendez Quintanilla",
+      "Bolivar Enrique Figueroa Arevalo", "Carlos Augusto Franco León",
+      "Carlos Julio Vera Chavez", "Christian Kerlin Ayala Piedra",
+      "Dalton Freddy Macas Lozano", "Dannys Kleber Campoverde Requelme",
+      "Diana Sofia Sanchez Gutierrez", "Edgar Benigno Morocho Rosales",
+      "Eduardo Fabian Marchant Guaman", "Gabriel Santiago Pereira Gomez",
+      "Galo Francisco Torres Torres", "George Vicente Espinoza Loayza",
+      "Guido Estuardo Coronel Nuñez", "Heidy León Santin",
+      "Jaime Rodrigo Morocho Morocho", "Jamil Rodrigo Castro Solorzano",
+      "Javier Ulises Tocto Palacios", "John Hernan Gonzalez Torres",
+      "Johnny Patricio Gonzalez Galarza", "Jorge Luis Cuenca Rios",
+      "Jorge Byron Mora Zumba", "Jose Sachez Gutierrez",
+      "Juan Diego Garcia Amoroso", "Junot Francisco Minuche Cuesta",
+      "Karla Katherine Zurita Chango", "Lady Esther Cuenca Hernandez",
+      "Lenin Stalin Salinas Betancourt", "Lizardo Antonio Espinoza Bustamante",
+      "Lucrecia Alexandra Espinoza Jaramillo", "Luis Alberto Caivinagua Uyaguari",
+      "Manuel Lenin Espinoza Aviles", "Marcos Flores Calle",
+      "Maria Elvira Carpio Erraez", "Maria de Lourdes Bustamante Acaro",
+      "Maria Dolores Rodriguez Solorzano", "Maria Isabel Tenesaca Blacio",
+      "Nancy Elizabeth Pesantez Marquez", "Orlando Efrain Palomeque Beltran",
+      "Rene Vicente Ormaza Torres", "Paola Francisca Vivanco Murillo",
+      "Paul Armando Iñiguez Apolo", "Ramiro Angel Carrion Bravo",
+      "Romulo Tito Espinoza Torres", "Segundo Luis Cañafe Villa",
+      "Sixto Cervilio Minga Sarango", "Vilma Elcira Gonzalez Cedillo",
+      "Wilson Emiliano Cuenca Armijos"," Otros"],
+      formReserver: { fiscalie: "", fiscal: "", type:"", num: "", delit:"", evidence:"" },
       appAccess: {
         name: "sz7crimadm",
         password: "",
@@ -232,6 +200,7 @@ export default {
       state: { year: 2023, month: 11, day: 1, dayWeek: 5 },
       stateLimitBack: { year: 2023, month: 1 },
       stateLimitNext: { year: 2024, month: 12 },
+      hours: ["09:00 - 10:00", "11:00 - 12:00", "14:30 - 15:30", "16:00 - 17:00"],
       calendar:
       {
         "2023": [{ month: "ENERO", start: 7, days: 31 }, { month: "FEBRERO", start: 3, days: 28 }, { month: "MARZO", start: 3, days: 31 },
@@ -268,9 +237,9 @@ export default {
           break;
       }
     },
-    addCite(aux){
-      if (aux=="DISP") {
-        this.dialog=true        
+    addCite(aux) {
+      if (aux == "DISP") {
+        this.dialog = true
       }
     },
     btnMonthBack() {
@@ -445,9 +414,10 @@ export default {
 </script>
 
 <style scoped>
-*{
+* {
   user-select: none
 }
+
 .tableMy {
   border-collapse: collapse;
 }

@@ -16,7 +16,7 @@
           </v-row>
         </v-container>
       </v-content>
-      <div v-else style="margin-top: 70px;">
+      <div v-else style="margin-top: 50px;">
         <div style="height: 100%; width: 100%; position: fixed">
           <router-view />
         

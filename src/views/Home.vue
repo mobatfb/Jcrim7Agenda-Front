@@ -2,16 +2,16 @@
   <div class="ma-1">
     <center>
 
-      <v-card class="mx-auto" elevation="1" max-width="500">
-        <v-img width="50%" style="margin: 3px;" :src="logoJcrim"></v-img>
+      <v-card class="mx-auto" elevation="1" max-width="400">
+        <v-img width="40%" style="margin: 3px;" :src="logoJcrim"></v-img>
         <v-card-text style="cursor:default" class="py-2 font-weight-black">
-          <h1 class="pa-3">UNIDAD DE CRIMINALÍSTICA</h1>
-          <h2 class="pa-3">TURNOS PARA PERICIAS</h2>
-          <h1>AUDIO, VIDEO Y AFINES</h1>
+          <h2 class="pa-3">UNIDAD DE CRIMINALÍSTICA</h2>
+          <h3 class="pa-3">TURNOS PARA PERICIAS</h3>
+          <h4>AUDIO, VIDEO Y AFINES</h4>
         </v-card-text>
         <br>
         <v-card-text>
-          <v-text-field style="font-size: x-large;" class="centered-input" v-model="user" variant="outlined" label="Identificacion" outlined></v-text-field>
+          <v-text-field style="font-size: large;" class="centered-input" v-model="user" variant="outlined" label="Identificacion" outlined></v-text-field>
           <v-btn  @click="goTo('Agenda')" class="mb-4 pa-8" block color="green" size="x-large">
             <h2>INGRESAR</h2>
           </v-btn>
