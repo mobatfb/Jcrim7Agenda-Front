@@ -6,8 +6,8 @@
         <table name="YEAR" cellspacing=0 cellpadding=0 style='margin-bottom: 5px; border-collapse:collapse;'>
           <tr>
             <td>
-              <v-btn :disabled="this.state.year == this.stateLimitBack.year" small @click="state.year--; state.month = 1"
-                rounded :color="$color.primary">
+              <v-btn :disabled="this.state.year == this.stateLimitBack.year" small
+                @click="state.year--; state.month = 1; get()" rounded :color="$color.primary">
                 <v-icon> mdi-arrow-left </v-icon>
               </v-btn>
             </td>
@@ -15,7 +15,7 @@
               <p align=center style='margin:0cm;text-align:center;'>{{ state.year }}</p>
             </td>
             <td>
-              <v-btn :disabled="this.state.year == this.stateLimitNext.year" @click="state.year++; state.month = 1"
+              <v-btn :disabled="this.state.year == this.stateLimitNext.year" @click="state.year++; get(); state.month = 1"
                 rounded small :color="$color.primary">
                 <v-icon> mdi-arrow-right </v-icon>
               </v-btn>
@@ -32,7 +32,8 @@
               </v-btn>
             </td>
             <td width=200>
-              <p align=center style='margin:0cm;text-align:center;'> {{ calendar[state.year][state.month - 1].month }}</p>
+              <p v-on:change="get()" align=center style='margin:0cm;text-align:center;'> {{
+                calendar[state.year][state.month - 1].month }}</p>
             </td>
             <td>
               <v-btn style="float: left"
@@ -44,10 +45,10 @@
           </tr>
         </table>
       </table>
-      <table name="SCHEDULE" class=tableMy style="cursor: default" border=1 cellspacing=0 cellpadding=0 width=95%>
+      <table name="SCHEDULE" v-bind="waitingGetData==false" class=tableMy style="cursor: default" border=1 cellspacing=0 cellpadding=0 width=95%>
         <tr name="headerDaysWeek">
-          <td v-for="day in daysWeek" v-show="day != 'SABADO' && day != 'DOMINGO'" :key="'Day:' + day" width=1000 class="tdMy"
-            style="background-color: yellow;">
+          <td v-for="day in daysWeek" v-show="day != 'SABADO' && day != 'DOMINGO'" :key="'Day:' + day" width=1000
+            class="tdMy" style="background-color: yellow;">
             <p style="margin: 0cm; font-size:small;" align=center><b>{{ day }}</b></p>
           </td>
         </tr>
@@ -55,26 +56,27 @@
           <td v-for="campoS in 7" v-show="campoS <= 5" :key="'campoS:' + campoS">
             <table name="miniTabla"
               v-show="(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start) <= calendar[state.year][state.month - 1].days"
-              v-if="((colS - 1) * 7) + campoS >= calendar[state.year][state.month - 1].start" border=1 cellspacing=0 cellpadding=0
-              style='border-collapse:collapse; margin: 2px; width: 98%'>
+              v-if="((colS - 1) * 7) + campoS >= calendar[state.year][state.month - 1].start" border=1 cellspacing=0
+              cellpadding=0 style=' border-collapse:collapse; margin: 2px; width: 98%'>
               <tr v-for="hour in hours" :key="'hour:' + hour" :name="'hour:' + hour">
                 <td v-if="hour == '09:00 - 10:00'" rowspan=4>
                   <p align=center style='margin-bottom:0cm;text-align:center'>
-                    {{ returnformatDay(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start) }}</p>
+                    {{ returnformatDay(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start) }}
+                  </p>
                 </td>
                 <td>
                   <p style="margin: 0cm; font-size: small" align=center><b>{{ hour }}</b></p>
                 </td>
-                <td style='background:#00B050;border:solid 1.0pt'>
+                <td  v-if="!dayUsed(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start, hour)" style='background:#00B050;border:solid 1.0pt'>
                   <p style="cursor: pointer;margin: 0cm; font-size: small;" align=center
                     @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = returnformatDay(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start); selected.hour = hour; addCite('DISP')">
-                    <b>DISPONIBLE</b>
+                    <b>{{ dayUsed(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start, hour) }}DISPONIBLE</b>
                   </p>
                 </td>
-                <!--    <td style='background:#C00000; border:solid 1.0pt'>
+               <td v-else style='background:#C00000; border:solid 1.0pt'>
                       <p style="cursor: pointer;margin: 0cm;color:white; cursor: pointer;" @click="addCite('OCUP')"
                         align=center><b>OCUPADO</b> </p> 
-                    </td> -->
+                    </td> 
               </tr>
             </table>
           </td>
@@ -98,7 +100,9 @@
         </v-toolbar>
         <center>
           <v-card-text style="cursor:default" class="py-2 font-weight-black">
-            <h3 class="pa-3">{{ selected.dayWeek }} {{ selected.day }} DE DICIEMBRE 2023 HORA: {{ selected.hour }}</h3>
+            <h3 class="pa-3">{{ selected.dayWeek }} {{ selected.day }} DE {{ calendar[state.year][state.month - 1].month
+            }}
+              DE {{ state.year }} HORA: {{ selected.hour }}</h3>
           </v-card-text>
           <v-card class="mx-auto" flat max-width="90%">
             <table cellspacing=0 cellpadding=0 style='border-collapse:collapse'>
@@ -134,7 +138,8 @@
                   <p align=right style='margin-bottom:0cm;text-align:right'><b>NÚMERO I.P/I.F:</b></p>
                 </td>
                 <td style='padding:0cm'>
-                  <v-text-field label="ESCRIBIR..." style="margin-bottom: -20px;" dense v-model="formReserver.num" outlined></v-text-field>
+                  <v-text-field label="ESCRIBIR..." style="margin-bottom: -20px;" dense v-model="formReserver.num"
+                    outlined></v-text-field>
                 </td>
               </tr>
               <tr>
@@ -142,7 +147,8 @@
                   <p align=right style='margin-bottom:0cm;text-align:right'><b>NÚMERO OFICIO:</b></p>
                 </td>
                 <td style='padding:0cm'>
-                  <v-text-field label="ESCRIBIR..." style="margin-bottom: -20px;" dense v-model="formReserver.nroOfice" outlined></v-text-field>
+                  <v-text-field label="ESCRIBIR..." style="margin-bottom: -20px;" dense v-model="formReserver.nroOfice"
+                    outlined></v-text-field>
                 </td>
               </tr>
               <tr>
@@ -150,7 +156,8 @@
                   <p align=right style='margin-bottom:0cm;text-align:right'><b>PRESUNTO DELITO:</b></p>
                 </td>
                 <td style='padding:0cm'>
-                  <v-text-field label="ESCRIBIR..." style="margin-bottom: -20px;" dense v-model="formReserver.delit" outlined></v-text-field>
+                  <v-text-field label="ESCRIBIR..." style="margin-bottom: -20px;" dense v-model="formReserver.delit"
+                    outlined></v-text-field>
                 </td>
               </tr>
               <tr>
@@ -158,7 +165,7 @@
                   <p align=right style='margin-bottom:0cm;text-align:right'><b>EVIDENCIA/INDICIO:</b></p>
                 </td>
                 <td style='padding:0cm'>
-                  <v-text-field label="ESCRIBIR..."  style="margin-bottom: -20px;" dense v-model="formReserver.evidence"
+                  <v-text-field label="ESCRIBIR..." style="margin-bottom: -20px;" dense v-model="formReserver.evidence"
                     outlined></v-text-field>
                 </td>
               </tr>
@@ -167,15 +174,16 @@
                   <p align=right style='margin-bottom:0cm;text-align:right'><b>INFORMACIÓN ADICIONAL:</b></p>
                 </td>
                 <td style='padding:0cm'>
-                  <v-textarea rows=3 label="ESCRIBIR..." no-resize style="margin-bottom: -20px; re font-size: 12px;" dense v-model="formReserver.info"
-                    outlined></v-textarea>
+                  <v-textarea rows=3 label="ESCRIBIR..." no-resize style="margin-bottom: -20px; re font-size: 12px;" dense
+                    v-model="formReserver.info" outlined></v-textarea>
                 </td>
               </tr>
             </table>
             <v-card-text>
               <h1 class="pb-3" style="color:red">{{ sms }}</h1>
               <v-checkbox v-model="sure" label="ESTOY DE ACUERDO CON LA INFORMACIÓN INGRESADA."></v-checkbox>
-              <v-btn :disabled="!sure" @click="updateSetting()" class="mb-4 pa-8" block color="green" size="x-large">
+              <v-btn :disabled="!sure" :loading="waiting" @click="save()" class="mb-4 pa-8" block color="green"
+                size="x-large">
                 <h2>GUARDAR</h2>
               </v-btn>
             </v-card-text>
@@ -191,12 +199,14 @@ export default {
   data() {
     return {
       logoJcrim: require("@/assets/default/imgJcrim.png"),
+      waitingGetData:false,
       cased: "",
       dialog: false,
       sure: false,
       waiting: false,
       sms: "",
       dayConter: 0,
+      getdataSchedule: [],
       selected: { dayWeek: "", day: "", hour: "" },
       fiscalies: ["SOLUCIONES RÁPIDAS", "PERSONAS Y GARANTÍAS", "PATRIMONIO CIUDADANO", "VIOLENCIA DE GÉNERO", "ADMINISTRACIÓN PÚBLICA", "ADOLESCENTES INFRACTORES", "DELINCUENCIA ORGANIZADA, TRANSNACIONAL E INTERNACIONAL", "FLAGRANCIA", "MULTICOMPETENTE", "DELITOS ACUÁTICOS", "ACCIDENTES DE TRÁNSITO", "OTRO"],
       fiscals: ["Alexander Hernan Apolo Vivanco", "Andrea Lucia Mendez Quintanilla",
@@ -224,12 +234,13 @@ export default {
         "Romulo Tito Espinoza Torres", "Segundo Luis Cañafe Villa",
         "Sixto Cervilio Minga Sarango", "Vilma Elcira Gonzalez Cedillo",
         "Wilson Emiliano Cuenca Armijos", "OTROS"],
-        etaps:['INVESTIGACIÓN PREVIA','INSTRUCCIÓN FISCAL', 'OTROS'],
-      formReserver: { fiscalie: "", fiscal: "",nroOfice:"", etap:"",type: "", num: "", delit: "", evidence: "", info:"" },
+      etaps: ['INVESTIGACIÓN PREVIA', 'INSTRUCCIÓN FISCAL', 'OTROS'],
+      formReserver: { dateUsed: "", yearUsed: "", monthUsed: "", dayUsed: "", hourUsed: "", fiscalie: "", fiscal: "", nroOfice: "", etap: "", section: "pendiente", num: "", delit: "", evidence: "", info: "" },
       appAccess: {
-        name: "sz7crimadm",
-        password: "",
+        name: "sz7crimUser",
+        password: "qwAS123",
       },
+      testx:[ {name:"aa"}, {name:"bb"}],
       daysWeek: ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO"],
       state: { year: 2023, month: 11, day: 1, dayWeek: 5 },
       stateLimitBack: { year: 2023, month: 1 },
@@ -254,7 +265,9 @@ export default {
     this.state.month = fecha.getMonth() + 1
     this.state.day = fecha.getDate()
     this.state.dayWeek = fecha.getDay()
-  },
+    this.get()
+},
+
   created() {
     this.$func.openDialog = this.openDialog;
     this.openDialog("news", { name: "dfdf" });
@@ -279,17 +292,76 @@ export default {
     },
     addCite(aux) {
       if (aux == "DISP") {
+        this.sure = false
+        this.waiting = false
         this.dialog = true
       }
     },
-    btnMonthBack() {
+    save() {
+      this.waiting = true;
+      this.formReserver.dateUsed = this.selected.dayWeek + " " + this.selected.day + " DE " + this.calendar[this.state.year][this.state.month - 1].month + " DE " + this.state.year + " HORA: " + this.selected.hour
+      this.formReserver.yearUsed = this.state.year
+      this.formReserver.monthUsed = this.state.month
+      this.formReserver.dayUsed = this.state.day
+      this.formReserver.hourUsed = this.selected.hour
+      this.sms = ""
+      this.$http({
+        method: "POST",
+        url: "/save",
+        data: {
+          req: this.formReserver,
+          appAccess: this.appAccess
+        },
+      })
+        .then((res) => {
+          if (res.data) {
+            this.showNotification(res.data.status)
+          } else {
+            this.$function.alertIni("error", "Error, Vuelva a intentar")
+          }
+        })
+        .catch(() => { })
+        .finally(() => {
+          this.waiting = false;
+        });
+    },
+    async get() {
+      this.waitingGetData=true
+      this.waiting = true
+      this.sms = ""
+      this.getdataSchedule = {}
+      this.appAccess.password = ""
+      this.$http
+        .get("/read/" + this.state.month + "/" + this.state.year)
+        .then((res) => {
+          if (res.data) {
+            if (res.data.schedule) {
+              this.getdataSchedule = res.data.schedule
+              console.log(this.getdataSchedule)
+              this.waiting = false
+              this.dialog = false
+            }
+          } else {
+            this.showNotification("error")
 
+          }
+        })
+        .catch(() => {
+          this.$function.alertIni("error", "Error. vuelva a intentar")
+          this.waiting = false
+        })
+        .finally(() => {
+          this.waitingGetData=false
+        });
+    },
+    btnMonthBack() {
       if (this.state.month == 1) {
         this.state.year--
         this.state.month = 12
       } else {
         this.state.month--
       }
+      this.get()
     },
     btnMonthNext() {
       if (this.state.month == 12) {
@@ -298,6 +370,7 @@ export default {
       } else {
         this.state.month++
       }
+      this.get()
     },
     goTo(aux) {
       this.$router.push({ name: aux })
@@ -416,8 +489,7 @@ export default {
     showNotification(aux) {
       switch (aux) {
         case "created":
-          this.waiting = false
-          this.dialog = true
+          this.get()
           break;
         case "updated":
           this.sms = "INFORMACION GUARDADA CORRECTAMENTE"
@@ -448,9 +520,24 @@ export default {
           break;
       }
 
-    }
-  },
-};
+    },
+    dayUsed(_day, _hour) {
+
+   //   console.log("data:"+this.getdataSchedule)
+      this.getdataSchedule.forEach(dataSchedule => {
+        if (dataSchedule.dayUsed == _day && dataSchedule.hourUsed == _hour) {
+      console.log("day:"+_day)
+ console.log("hour:"+_hour)
+          console.log('encontrado')
+          return true
+        }
+        return false
+      
+    });
+      
+  }
+}
+}
 </script>
 
 <style scoped>
