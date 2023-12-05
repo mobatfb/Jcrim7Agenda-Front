@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
 <template>
   <div>
     <center>
@@ -45,23 +46,28 @@
       </table>
       <table name="SCHEDULE" class=tableMy style="cursor: default" border=1 cellspacing=0 cellpadding=0 width=95%>
         <tr name="headerDaysWeek">
-          <td v-for="day in daysWeek" :key="'Day:' + day" width=1000 class="tdMy" style="background-color: yellow;">
+          <td v-for="day in daysWeek" v-show="day != 'SABADO' && day != 'DOMINGO'" :key="'Day:' + day" width=1000 class="tdMy"
+            style="background-color: yellow;">
             <p style="margin: 0cm; font-size:small;" align=center><b>{{ day }}</b></p>
           </td>
         </tr>
-        <tr v-for="colsS in 5" :key="'colsS:' + colsS" :name="'colsS:' + colsS">
-          <td>
-            <table border=1 cellspacing=0 cellpadding=0 style='border-collapse:collapse; margin: 2px; width: 98%'>
+        <tr v-for="colS in 6" :key="'colsS:' + colS" :name="'colsS:' + colS">
+          <td v-for="campoS in 7" v-show="campoS <= 5" :key="'campoS:' + campoS">
+            <table name="miniTabla"
+              v-show="(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start) <= calendar[state.year][state.month - 1].days"
+              v-if="((colS - 1) * 7) + campoS >= calendar[state.year][state.month - 1].start" border=1 cellspacing=0 cellpadding=0
+              style='border-collapse:collapse; margin: 2px; width: 98%'>
               <tr v-for="hour in hours" :key="'hour:' + hour" :name="'hour:' + hour">
                 <td v-if="hour == '09:00 - 10:00'" rowspan=4>
-                  <p align=center style='margin-bottom:0cm;text-align:center'>1</p>
+                  <p align=center style='margin-bottom:0cm;text-align:center'>
+                    {{ returnformatDay(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start) }}</p>
                 </td>
-
                 <td>
                   <p style="margin: 0cm; font-size: small" align=center><b>{{ hour }}</b></p>
                 </td>
                 <td style='background:#00B050;border:solid 1.0pt'>
-                  <p style="cursor: pointer;margin: 0cm; font-size: small;" align=center @click="selected.dayWeek='xx'+hour;selected.day='xx'+hour;selected.hour=hour; addCite('DISP')">
+                  <p style="cursor: pointer;margin: 0cm; font-size: small;" align=center
+                    @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = returnformatDay(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start); selected.hour = hour; addCite('DISP')">
                     <b>DISPONIBLE</b>
                   </p>
                 </td>
@@ -92,7 +98,7 @@
         </v-toolbar>
         <center>
           <v-card-text style="cursor:default" class="py-2 font-weight-black">
-            <h3 class="pa-3">{{ selected.dayWeek}} {{ selected.day}} DE DICIEMBRE 2023 HORA: {{ selected.hour }}</h3>
+            <h3 class="pa-3">{{ selected.dayWeek }} {{ selected.day }} DE DICIEMBRE 2023 HORA: {{ selected.hour }}</h3>
           </v-card-text>
           <v-card class="mx-auto" flat max-width="90%">
             <table cellspacing=0 cellpadding=0 style='border-collapse:collapse'>
@@ -101,8 +107,8 @@
                   <p align=right style='margin-bottom:0cm;text-align:right'><b>FISCALÍA:</b></p>
                 </td>
                 <td style='padding:0cm'>
-          <v-select   dense label="SELECCIONAR.." v-model="formReserver.fiscalie" style="margin-bottom: -20px;"
-            :items="fiscalies" :return-object="false" outlined></v-select>
+                  <v-select dense label="SELECCIONAR..." v-model="formReserver.fiscalie" style="margin-bottom: -20px;"
+                    :items="fiscalies" :return-object="false" outlined></v-select>
                 </td>
               </tr>
               <tr>
@@ -110,35 +116,61 @@
                   <p align=right style='margin-bottom:0cm;text-align:right'><b>FISCAL:</b></p>
                 </td>
                 <td style='padding:0cm'>
-          <v-select   dense label="SELECCIONAR.." v-model="formReserver.fiscal" style="margin-bottom: -20px;"
-            :items="fiscals" :return-object="false" outlined></v-select>
+                  <v-select dense label="SELECCIONAR..." v-model="formReserver.fiscal" style="margin-bottom: -20px;"
+                    :items="fiscals" :return-object="false" outlined></v-select>
                 </td>
-              </tr>  
+              </tr>
+              <tr>
+                <td width=141 style='padding-right:5px'>
+                  <p align=right style='margin-bottom:0cm;text-align:right'><b>ETAPA:</b></p>
+                </td>
+                <td style='padding:0cm'>
+                  <v-select dense label="SELECCIONAR..." v-model="formReserver.etap" style="margin-bottom: -20px;"
+                    :items="etaps" :return-object="false" outlined></v-select>
+                </td>
+              </tr>
               <tr>
                 <td width=141 style='padding-right:5px'>
                   <p align=right style='margin-bottom:0cm;text-align:right'><b>NÚMERO I.P/I.F:</b></p>
                 </td>
                 <td style='padding:0cm'>
-                  <v-text-field style="margin-bottom: -20px;" dense v-model="formReserver.num" outlined></v-text-field>
+                  <v-text-field label="ESCRIBIR..." style="margin-bottom: -20px;" dense v-model="formReserver.num" outlined></v-text-field>
                 </td>
               </tr>
-             
+              <tr>
+                <td width=141 style='padding-right:5px'>
+                  <p align=right style='margin-bottom:0cm;text-align:right'><b>NÚMERO OFICIO:</b></p>
+                </td>
+                <td style='padding:0cm'>
+                  <v-text-field label="ESCRIBIR..." style="margin-bottom: -20px;" dense v-model="formReserver.nroOfice" outlined></v-text-field>
+                </td>
+              </tr>
               <tr>
                 <td width=141 style='padding-right:5px'>
                   <p align=right style='margin-bottom:0cm;text-align:right'><b>PRESUNTO DELITO:</b></p>
                 </td>
                 <td style='padding:0cm'>
-                  <v-text-field style="margin-bottom: -20px;" dense v-model="formReserver.delit" outlined></v-text-field>
+                  <v-text-field label="ESCRIBIR..." style="margin-bottom: -20px;" dense v-model="formReserver.delit" outlined></v-text-field>
                 </td>
-              </tr>            
+              </tr>
               <tr>
                 <td width=141 style='padding-right:5px'>
                   <p align=right style='margin-bottom:0cm;text-align:right'><b>EVIDENCIA/INDICIO:</b></p>
                 </td>
                 <td style='padding:0cm'>
-                  <v-text-field style="margin-bottom: -20px;" dense v-model="formReserver.evidence" outlined></v-text-field>
+                  <v-text-field label="ESCRIBIR..."  style="margin-bottom: -20px;" dense v-model="formReserver.evidence"
+                    outlined></v-text-field>
                 </td>
-              </tr> 
+              </tr>
+              <tr>
+                <td width=141 style='padding-right:5px'>
+                  <p align=right style='margin-bottom:0cm;text-align:right'><b>INFORMACIÓN ADICIONAL:</b></p>
+                </td>
+                <td style='padding:0cm'>
+                  <v-textarea rows=3 label="ESCRIBIR..." no-resize style="margin-bottom: -20px; re font-size: 12px;" dense v-model="formReserver.info"
+                    outlined></v-textarea>
+                </td>
+              </tr>
             </table>
             <v-card-text>
               <h1 class="pb-3" style="color:red">{{ sms }}</h1>
@@ -164,39 +196,41 @@ export default {
       sure: false,
       waiting: false,
       sms: "",
-      selected:{dayWeek:"", day:"", hour:""},
-      fiscalies:["SOLUCIONES RÁPIDAS", "PERSONAS Y GARANTÍAS","PATRIMONIO CIUDADANO", "VIOLENCIA DE GÉNERO", "ADMINISTRACIÓN PÚBLICA", "ADOLESCENTES INFRACTORES", "DELINCUENCIA ORGANIZADA, TRANSNACIONAL E INTERNACIONAL", "FLAGRANCIA", "MULTICOMPETENTE", "DELITOS ACUÁTICOS", "ACCIDENTES DE TRÁNSITO", "OTRO"],
-      fiscals:["Alexander Hernan Apolo Vivanco", "Andrea Lucia Mendez Quintanilla",
-      "Bolivar Enrique Figueroa Arevalo", "Carlos Augusto Franco León",
-      "Carlos Julio Vera Chavez", "Christian Kerlin Ayala Piedra",
-      "Dalton Freddy Macas Lozano", "Dannys Kleber Campoverde Requelme",
-      "Diana Sofia Sanchez Gutierrez", "Edgar Benigno Morocho Rosales",
-      "Eduardo Fabian Marchant Guaman", "Gabriel Santiago Pereira Gomez",
-      "Galo Francisco Torres Torres", "George Vicente Espinoza Loayza",
-      "Guido Estuardo Coronel Nuñez", "Heidy León Santin",
-      "Jaime Rodrigo Morocho Morocho", "Jamil Rodrigo Castro Solorzano",
-      "Javier Ulises Tocto Palacios", "John Hernan Gonzalez Torres",
-      "Johnny Patricio Gonzalez Galarza", "Jorge Luis Cuenca Rios",
-      "Jorge Byron Mora Zumba", "Jose Sachez Gutierrez",
-      "Juan Diego Garcia Amoroso", "Junot Francisco Minuche Cuesta",
-      "Karla Katherine Zurita Chango", "Lady Esther Cuenca Hernandez",
-      "Lenin Stalin Salinas Betancourt", "Lizardo Antonio Espinoza Bustamante",
-      "Lucrecia Alexandra Espinoza Jaramillo", "Luis Alberto Caivinagua Uyaguari",
-      "Manuel Lenin Espinoza Aviles", "Marcos Flores Calle",
-      "Maria Elvira Carpio Erraez", "Maria de Lourdes Bustamante Acaro",
-      "Maria Dolores Rodriguez Solorzano", "Maria Isabel Tenesaca Blacio",
-      "Nancy Elizabeth Pesantez Marquez", "Orlando Efrain Palomeque Beltran",
-      "Rene Vicente Ormaza Torres", "Paola Francisca Vivanco Murillo",
-      "Paul Armando Iñiguez Apolo", "Ramiro Angel Carrion Bravo",
-      "Romulo Tito Espinoza Torres", "Segundo Luis Cañafe Villa",
-      "Sixto Cervilio Minga Sarango", "Vilma Elcira Gonzalez Cedillo",
-      "Wilson Emiliano Cuenca Armijos"," Otros"],
-      formReserver: { fiscalie: "", fiscal: "", type:"", num: "", delit:"", evidence:"" },
+      dayConter: 0,
+      selected: { dayWeek: "", day: "", hour: "" },
+      fiscalies: ["SOLUCIONES RÁPIDAS", "PERSONAS Y GARANTÍAS", "PATRIMONIO CIUDADANO", "VIOLENCIA DE GÉNERO", "ADMINISTRACIÓN PÚBLICA", "ADOLESCENTES INFRACTORES", "DELINCUENCIA ORGANIZADA, TRANSNACIONAL E INTERNACIONAL", "FLAGRANCIA", "MULTICOMPETENTE", "DELITOS ACUÁTICOS", "ACCIDENTES DE TRÁNSITO", "OTRO"],
+      fiscals: ["Alexander Hernan Apolo Vivanco", "Andrea Lucia Mendez Quintanilla",
+        "Bolivar Enrique Figueroa Arevalo", "Carlos Augusto Franco León",
+        "Carlos Julio Vera Chavez", "Christian Kerlin Ayala Piedra",
+        "Dalton Freddy Macas Lozano", "Dannys Kleber Campoverde Requelme",
+        "Diana Sofia Sanchez Gutierrez", "Edgar Benigno Morocho Rosales",
+        "Eduardo Fabian Marchant Guaman", "Gabriel Santiago Pereira Gomez",
+        "Galo Francisco Torres Torres", "George Vicente Espinoza Loayza",
+        "Guido Estuardo Coronel Nuñez", "Heidy León Santin",
+        "Jaime Rodrigo Morocho Morocho", "Jamil Rodrigo Castro Solorzano",
+        "Javier Ulises Tocto Palacios", "John Hernan Gonzalez Torres",
+        "Johnny Patricio Gonzalez Galarza", "Jorge Luis Cuenca Rios",
+        "Jorge Byron Mora Zumba", "Jose Sachez Gutierrez",
+        "Juan Diego Garcia Amoroso", "Junot Francisco Minuche Cuesta",
+        "Karla Katherine Zurita Chango", "Lady Esther Cuenca Hernandez",
+        "Lenin Stalin Salinas Betancourt", "Lizardo Antonio Espinoza Bustamante",
+        "Lucrecia Alexandra Espinoza Jaramillo", "Luis Alberto Caivinagua Uyaguari",
+        "Manuel Lenin Espinoza Aviles", "Marcos Flores Calle",
+        "Maria Elvira Carpio Erraez", "Maria de Lourdes Bustamante Acaro",
+        "Maria Dolores Rodriguez Solorzano", "Maria Isabel Tenesaca Blacio",
+        "Nancy Elizabeth Pesantez Marquez", "Orlando Efrain Palomeque Beltran",
+        "Rene Vicente Ormaza Torres", "Paola Francisca Vivanco Murillo",
+        "Paul Armando Iñiguez Apolo", "Ramiro Angel Carrion Bravo",
+        "Romulo Tito Espinoza Torres", "Segundo Luis Cañafe Villa",
+        "Sixto Cervilio Minga Sarango", "Vilma Elcira Gonzalez Cedillo",
+        "Wilson Emiliano Cuenca Armijos", "OTROS"],
+        etaps:['INVESTIGACIÓN PREVIA','INSTRUCCIÓN FISCAL', 'OTROS'],
+      formReserver: { fiscalie: "", fiscal: "",nroOfice:"", etap:"",type: "", num: "", delit: "", evidence: "", info:"" },
       appAccess: {
         name: "sz7crimadm",
         password: "",
       },
-      daysWeek: ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES"],
+      daysWeek: ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO"],
       state: { year: 2023, month: 11, day: 1, dayWeek: 5 },
       stateLimitBack: { year: 2023, month: 1 },
       stateLimitNext: { year: 2024, month: 12 },
@@ -236,6 +270,12 @@ export default {
         default:
           break;
       }
+    },
+    returnformatDay(aux) {
+      if (aux <= 9) {
+        aux = "0" + aux
+      }
+      return aux
     },
     addCite(aux) {
       if (aux == "DISP") {
@@ -455,5 +495,4 @@ export default {
   border-radius: 2%;
   left: 10px;
   position: relative;
-}
-</style>
+}</style>
