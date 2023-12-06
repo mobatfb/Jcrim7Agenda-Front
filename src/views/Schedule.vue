@@ -45,7 +45,8 @@
           </tr>
         </table>
       </table>
-      <table name="SCHEDULE" v-bind="waitingGetData==false" class=tableMy style="cursor: default" border=1 cellspacing=0 cellpadding=0 width=95%>
+      <table name="SCHEDULE" v-bind="waitingGetData == false" class=tableMy style="cursor: default" border=1 cellspacing=0
+        cellpadding=0 width=95%>
         <tr name="headerDaysWeek">
           <td v-for="day in daysWeek" v-show="day != 'SABADO' && day != 'DOMINGO'" :key="'Day:' + day" width=1000
             class="tdMy" style="background-color: yellow;">
@@ -58,7 +59,7 @@
               v-show="(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start) <= calendar[state.year][state.month - 1].days"
               v-if="((colS - 1) * 7) + campoS >= calendar[state.year][state.month - 1].start" border=1 cellspacing=0
               cellpadding=0 style=' border-collapse:collapse; margin: 2px; width: 98%'>
-              <tr v-for="hour in hours" :key="'hour:' + hour" :name="'hour:' + hour">
+              <tr v-for="hour, index in hours" :key="'hour:' + hour" :name="'hour:' + hour">
                 <td v-if="hour == '09:00 - 10:00'" rowspan=4>
                   <p align=center style='margin-bottom:0cm;text-align:center'>
                     {{ returnformatDay(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start) }}
@@ -67,16 +68,17 @@
                 <td>
                   <p style="margin: 0cm; font-size: small" align=center><b>{{ hour }}</b></p>
                 </td>
-                <td  v-if="!dayUsed(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start, hour)" style='background:#00B050;border:solid 1.0pt'>
+                <td v-if="fieldsState[((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start][index]"
+                  style='background:#00B050;border:solid 1.0pt'>
                   <p style="cursor: pointer;margin: 0cm; font-size: small;" align=center
                     @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = returnformatDay(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start); selected.hour = hour; addCite('DISP')">
-                    <b>{{ dayUsed(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start, hour) }}DISPONIBLE</b>
+                    <b>DISPONIBLE</b>
                   </p>
                 </td>
-               <td v-else style='background:#C00000; border:solid 1.0pt'>
-                      <p style="cursor: pointer;margin: 0cm;color:white; cursor: pointer;" @click="addCite('OCUP')"
-                        align=center><b>OCUPADO</b> </p> 
-                    </td> 
+                <td  v-else style='background:#C00000; border:solid 1.0pt'>
+                  <p style="cursor: pointer;margin: 0cm;color:white; cursor: pointer;" @click="addCite('OCUP')"
+                    align=center><b>OCUPADO</b> </p>
+                </td>
               </tr>
             </table>
           </td>
@@ -199,15 +201,49 @@ export default {
   data() {
     return {
       logoJcrim: require("@/assets/default/imgJcrim.png"),
-      waitingGetData:false,
+      waitingGetData: false,
       cased: "",
       dialog: false,
       sure: false,
       waiting: false,
       sms: "",
       dayConter: 0,
-      getdataSchedule: [],
+      getdataSchedule: [{ usedDay: "", status: "" }],
       selected: { dayWeek: "", day: "", hour: "" },
+      fieldsState: [
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false],
+        [false, false, false, false]
+      ],
       fiscalies: ["SOLUCIONES RÁPIDAS", "PERSONAS Y GARANTÍAS", "PATRIMONIO CIUDADANO", "VIOLENCIA DE GÉNERO", "ADMINISTRACIÓN PÚBLICA", "ADOLESCENTES INFRACTORES", "DELINCUENCIA ORGANIZADA, TRANSNACIONAL E INTERNACIONAL", "FLAGRANCIA", "MULTICOMPETENTE", "DELITOS ACUÁTICOS", "ACCIDENTES DE TRÁNSITO", "OTRO"],
       fiscals: ["Alexander Hernan Apolo Vivanco", "Andrea Lucia Mendez Quintanilla",
         "Bolivar Enrique Figueroa Arevalo", "Carlos Augusto Franco León",
@@ -240,11 +276,14 @@ export default {
         name: "sz7crimUser",
         password: "qwAS123",
       },
-      testx:[ {name:"aa"}, {name:"bb"}],
+      testx: [{ name: "aa" }, { name: "bb" }],
+      testAlternate: true,
+      testState: [{ dayUsed: 2, yearUsed: 2022 }, { dayUsed: 10, yearUsed: 2022 }, { dayUsed: 5, yearUsed: 2022 }, { dayUsed: 7, yearUsed: 2022 }],
       daysWeek: ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO"],
       state: { year: 2023, month: 11, day: 1, dayWeek: 5 },
       stateLimitBack: { year: 2023, month: 1 },
       stateLimitNext: { year: 2024, month: 12 },
+
       hours: ["09:00 - 10:00", "11:00 - 12:00", "14:30 - 15:30", "16:00 - 17:00"],
       calendar:
       {
@@ -266,7 +305,7 @@ export default {
     this.state.day = fecha.getDate()
     this.state.dayWeek = fecha.getDay()
     this.get()
-},
+  },
 
   created() {
     this.$func.openDialog = this.openDialog;
@@ -326,7 +365,7 @@ export default {
         });
     },
     async get() {
-      this.waitingGetData=true
+      this.waitingGetData = true
       this.waiting = true
       this.sms = ""
       this.getdataSchedule = {}
@@ -337,7 +376,7 @@ export default {
           if (res.data) {
             if (res.data.schedule) {
               this.getdataSchedule = res.data.schedule
-              console.log(this.getdataSchedule)
+              this.setStatus()
               this.waiting = false
               this.dialog = false
             }
@@ -351,8 +390,30 @@ export default {
           this.waiting = false
         })
         .finally(() => {
-          this.waitingGetData=false
+          this.waitingGetData = false
         });
+    },
+    setStatus() {
+      for (let index = 0; index < this.getdataSchedule.length; index++) {
+        console.log("principal:", this.getdataSchedule[index])
+        for (let index2 = 0; index2 < this.hours.length; index2++) {
+          console.log("hourFor:", this.hours[index2])
+          const hour = this.hours[index2];
+          console.log("hour:", hour)
+          console.log("hourUsed:",this.getdataSchedule[index].hourUsed)
+        
+          if (this.getdataSchedule[index].hourUsed == hour) {
+          console.log("hourTRUE")
+          console.log("FINISH:",this.fieldsState[this.getdataSchedule[index].dayUsed][index2])
+
+            this.fieldsState[this.getdataSchedule[index].dayUsed][index2] = true
+          console.log("FINISH:",this.fieldsState[this.getdataSchedule[index].dayUsed][index2])
+
+          }
+        }
+        console.log(this.getdataSchedule)
+        console.log(this.fieldsState)
+      }
     },
     btnMonthBack() {
       if (this.state.month == 1) {
@@ -521,22 +582,22 @@ export default {
       }
 
     },
-    dayUsed(_day, _hour) {
+    dayUsedp(_day, _hour) {
 
-   //   console.log("data:"+this.getdataSchedule)
+      //   console.log("data:"+this.getdataSchedule)
       this.getdataSchedule.forEach(dataSchedule => {
         if (dataSchedule.dayUsed == _day && dataSchedule.hourUsed == _hour) {
-      console.log("day:"+_day)
- console.log("hour:"+_hour)
+          console.log("day:" + _day)
+          console.log("hour:" + _hour)
           console.log('encontrado')
           return true
         }
         return false
-      
-    });
-      
+
+      });
+
+    }
   }
-}
 }
 </script>
 
@@ -582,4 +643,5 @@ export default {
   border-radius: 2%;
   left: 10px;
   position: relative;
-}</style>
+}
+</style>
