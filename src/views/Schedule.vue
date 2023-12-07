@@ -68,16 +68,17 @@
                 <td>
                   <p style="margin: 0cm; font-size: small" align=center><b>{{ hour }}</b></p>
                 </td>
-                <td v-if="fieldsState[((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start][index]"
+                <td
+                  v-if="!fieldsState[((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start][index]"
                   style='background:#00B050;border:solid 1.0pt'>
                   <p style="cursor: pointer;margin: 0cm; font-size: small;" align=center
-                    @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = returnformatDay(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start); selected.hour = hour; addCite('DISP')">
+                    @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start; selected.hour = hour; addCite('DISP')">
                     <b>DISPONIBLE</b>
                   </p>
                 </td>
-                <td  v-else style='background:#C00000; border:solid 1.0pt'>
-                  <p style="cursor: pointer;margin: 0cm;color:white; cursor: pointer;" @click="addCite('OCUP')"
-                    align=center><b>OCUPADO</b> </p>
+                <td v-else style='background:#C00000; border:solid 1.0pt'>
+                  <p style="cursor: pointer;margin: 0cm;color:white; cursor: pointer;font-size: small;"
+                    @click="addCite('OCUP')" align=center><b>RESERVADO</b> </p>
                 </td>
               </tr>
             </table>
@@ -193,6 +194,8 @@
         </center>
       </v-card>
     </v-dialog>
+
+    
   </div>
 </template>
 <script>
@@ -211,38 +214,39 @@ export default {
       getdataSchedule: [{ usedDay: "", status: "" }],
       selected: { dayWeek: "", day: "", hour: "" },
       fieldsState: [
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false]
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+        [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
       ],
       fiscalies: ["SOLUCIONES RÁPIDAS", "PERSONAS Y GARANTÍAS", "PATRIMONIO CIUDADANO", "VIOLENCIA DE GÉNERO", "ADMINISTRACIÓN PÚBLICA", "ADOLESCENTES INFRACTORES", "DELINCUENCIA ORGANIZADA, TRANSNACIONAL E INTERNACIONAL", "FLAGRANCIA", "MULTICOMPETENTE", "DELITOS ACUÁTICOS", "ACCIDENTES DE TRÁNSITO", "OTRO"],
       fiscals: ["Alexander Hernan Apolo Vivanco", "Andrea Lucia Mendez Quintanilla",
@@ -341,7 +345,7 @@ export default {
       this.formReserver.dateUsed = this.selected.dayWeek + " " + this.selected.day + " DE " + this.calendar[this.state.year][this.state.month - 1].month + " DE " + this.state.year + " HORA: " + this.selected.hour
       this.formReserver.yearUsed = this.state.year
       this.formReserver.monthUsed = this.state.month
-      this.formReserver.dayUsed = this.state.day
+      this.formReserver.dayUsed = this.selected.day
       this.formReserver.hourUsed = this.selected.hour
       this.sms = ""
       this.$http({
@@ -365,18 +369,18 @@ export default {
         });
     },
     async get() {
+      this.resetStatus()
+      console.log("in Get")
       this.waitingGetData = true
       this.waiting = true
       this.sms = ""
-      this.getdataSchedule = {}
-      this.appAccess.password = ""
       this.$http
         .get("/read/" + this.state.month + "/" + this.state.year)
         .then((res) => {
           if (res.data) {
             if (res.data.schedule) {
-              this.getdataSchedule = res.data.schedule
-              this.setStatus()
+              this.setStatus(res.data.schedule)
+              console.log(res.data.schedule)
               this.waiting = false
               this.dialog = false
             }
@@ -393,26 +397,31 @@ export default {
           this.waitingGetData = false
         });
     },
-    setStatus() {
-      for (let index = 0; index < this.getdataSchedule.length; index++) {
-        console.log("principal:", this.getdataSchedule[index])
+    setStatus(auxData) {
+      for (let index = 0; index < auxData.length; index++) {
+        //  console.log("principal:", auxData[index])
         for (let index2 = 0; index2 < this.hours.length; index2++) {
-          console.log("hourFor:", this.hours[index2])
+          //    console.log("hourFor:", this.hours[index2])
           const hour = this.hours[index2];
-          console.log("hour:", hour)
-          console.log("hourUsed:",this.getdataSchedule[index].hourUsed)
-        
-          if (this.getdataSchedule[index].hourUsed == hour) {
-          console.log("hourTRUE")
-          console.log("FINISH:",this.fieldsState[this.getdataSchedule[index].dayUsed][index2])
-
-            this.fieldsState[this.getdataSchedule[index].dayUsed][index2] = true
-          console.log("FINISH:",this.fieldsState[this.getdataSchedule[index].dayUsed][index2])
-
-          }
+          //  console.log("hour:", hour)
+          //  console.log("hourUsed:",auxData[index].hourUsed)
+          if (auxData[index].hourUsed == hour) {
+            //    console.log("hourTRUE")
+            //    console.log("FINISH:",this.fieldsState[auxData[index].dayUsed][index2])
+            this.fieldsState[auxData[index].dayUsed][index2] = true
+            //     console.log("FINISH:",this.fieldsState[auxData[index].dayUsed][index2])
+            //
+          } 
         }
-        console.log(this.getdataSchedule)
-        console.log(this.fieldsState)
+        //    console.log(auxData)
+        //    console.log(this.fieldsState)
+      }
+    },
+    resetStatus() {
+      for (let index = 0; index < this.fieldsState.length; index++) {
+        for (let index2 = 0; index2 < this.hours.length; index2++) {
+          this.fieldsState[index][index2] = false
+        }
       }
     },
     btnMonthBack() {
@@ -582,21 +591,7 @@ export default {
       }
 
     },
-    dayUsedp(_day, _hour) {
 
-      //   console.log("data:"+this.getdataSchedule)
-      this.getdataSchedule.forEach(dataSchedule => {
-        if (dataSchedule.dayUsed == _day && dataSchedule.hourUsed == _hour) {
-          console.log("day:" + _day)
-          console.log("hour:" + _hour)
-          console.log('encontrado')
-          return true
-        }
-        return false
-
-      });
-
-    }
   }
 }
 </script>
