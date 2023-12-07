@@ -32,7 +32,7 @@ links:[
 keywords: ["services", "world", "manager", "moba", "business"] }
 Vue.prototype.$func = { openDialog: null, name: null }
 Vue.prototype.$function = { }
-Vue.prototype.$user = { data: {}, name: null }
+Vue.prototype.$user = { id: null }
 Vue.prototype.$salesman = { name: 'Don Code', contact: '967267405' }
 Vue.prototype.$color = {
   primary: '#FFC607',

@@ -45,7 +45,7 @@
           </tr>
         </table>
       </table>
-      <table name="SCHEDULE" v-if="!waitForData" class=tableMy style="cursor: default" border=1 cellspacing=0
+      <table name="SCHEDULE" v-bind="waitingGetData == false" class=tableMy style="cursor: default" border=1 cellspacing=0
         cellpadding=0 width=95%>
         <tr name="headerDaysWeek">
           <td v-for="day in daysWeek" v-show="day != 'SABADO' && day != 'DOMINGO'" :key="'Day:' + day" width=1000
@@ -69,24 +69,16 @@
                   <p style="margin: 0cm; font-size: small" align=center><b>{{ hour }}</b></p>
                 </td>
                 <td
-                  v-if="fieldsState[((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start][index].status && fieldsState[((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start][index].userId == $user.id"
-                  style='background:yellow; border:solid 1.0pt'>
-                  <p style="cursor: pointer;margin: 0cm; cursor: pointer;font-size: small;"
-                    @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start; selected.hour = hour; addCite('RESERVED')"
-                    align=center><b>RESERVADO</b> </p>
-                </td>
-                <td
-                  v-else-if="fieldsState[((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start][index].status"
-                  style='background:#C00000; border:solid 1.0pt black;color:white;font-size: small'>
-                  <p style="cursor: pointer;margin: 0cm;"
-                    @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start; selected.hour = hour; addCite('OCCUPIED')"
-                    align=center><b style="padding-left: 7px; padding-right: 7px;">{{ 'OCUPADO' }}</b> </p>
-                </td>
-                <td v-else style='background:#00B050;border:solid 1.0pt'>
+                  v-if="!fieldsState[((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start][index].status"
+                  style='background:#00B050;border:solid 1.0pt'>
                   <p style="cursor: pointer;margin: 0cm; font-size: small;" align=center
-                    @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start; selected.hour = hour; addCite('AVAILABLE')">
+                    @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start; selected.hour = hour; addCite('DISP')">
                     <b>DISPONIBLE</b>
                   </p>
+                </td>
+                <td v-else style='background:#C00000; border:solid 1.0pt'>
+                  <p style="cursor: pointer;margin: 0cm;color:white; cursor: pointer;font-size: small;"
+                    @click="addCite('OCUP')" align=center><b>RESERVADO</b> </p>
                 </td>
               </tr>
             </table>
@@ -202,119 +194,8 @@
         </center>
       </v-card>
     </v-dialog>
-    <!-- VENTANA DE AJUSTES EN DIALOGO SHOW -->
-    <v-dialog v-model="dialogShow" persistent width="600px">
-      <v-card>
-        <v-toolbar color="primary" dense>
-          <v-toolbar-title>CITA RESERVADA POR: {{ formShow.userId }}</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-toolbar-items>
-            <v-btn color="" outlined icon @click="dialogShow = false">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-toolbar-items>
-        </v-toolbar>
-        <center>
-          <v-card-text style="cursor:default" class="py-2 font-weight-black">
-            <h3 class="pa-3">{{ selected.dayWeek }} {{ selected.day }} DE {{ calendar[state.year][state.month - 1].month
-            }}
-              DE {{ state.year }} HORA: {{ selected.hour }}</h3>
-          </v-card-text>
-          <v-card class="mx-auto" flat max-width="90%">
-            <table cellspacing=0 cellpadding=0 style='border-collapse:collapse'>
-              <tr>
-                <td width=141 style='padding-right:5px'>
-                  <p align=right style='margin-bottom:0cm;text-align:right'><b>FISCALÍA:</b></p>
-                </td>
-                <td style='padding:0cm'>
-                  <p style='margin-bottom:0cm;text-align:left'>
-                    {{ formShow.fiscalie }}
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td width=141 style='padding-right:5px'>
-                  <p align=right style='margin-bottom:0cm;text-align:right'><b>FISCAL:</b></p>
-                </td>
-                <td style='padding:0cm'>
-                  <p style='margin-bottom:0cm;text-align:left'>
-                    {{ (formShow.fiscal).toUpperCase() }}
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td width=141 style='padding-right:5px'>
-                  <p align=right style='margin-bottom:0cm;text-align:right'><b>ETAPA:</b></p>
-                </td>
-                <td style='padding:0cm'>
-                  <p style='margin-bottom:0cm;text-align:left'>
-                    {{ formShow.etap }}
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td width=141 style='padding-right:5px'>
-                  <p align=right style='margin-bottom:0cm;text-align:right'><b>NÚMERO I.P/I.F:</b></p>
-                </td>
-                <td style='padding:0cm'>
-                  <p style='margin-bottom:0cm;text-align:left'>
-                    {{ formShow.num }}
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td width=141 style='padding-right:5px'>
-                  <p align=right style='margin-bottom:0cm;text-align:right'><b>NÚMERO OFICIO:</b></p>
-                </td>
-                <td style='padding:0cm'>
-                  <p style='margin-bottom:0cm;text-align:left'>
-                    {{ formShow.nroOfice }}
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td width=141 style='padding-right:5px'>
-                  <p align=right style='margin-bottom:0cm;text-align:right'><b>PRESUNTO DELITO:</b></p>
-                </td>
-                <td style='padding:0cm'>
-                  <p style='margin-bottom:0cm;text-align:left'>
-                    {{ (formShow.delit).toUpperCase() }}
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td width=141 style='padding-right:5px'>
-                  <p align=right style='margin-bottom:0cm;text-align:right'><b>EVIDENCIA/INDICIO:</b></p>
-                </td>
-                <td style='padding:0cm'>
-                  <p style='margin-bottom:0cm;text-align:left'>
-                    {{ formShow.evidence }}
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td width=141 style='padding-right:5px'>
-                  <p align=right style='margin-bottom:0cm;text-align:right'><b>INFORMACIÓN:</b></p>
-                </td>
-                <td style='padding:0cm'>
-                  <p style='margin-bottom:0cm;text-align:left'>
-                    {{ formShow.info }}
-                  </p>
-                </td>
-              </tr>
-            </table>
-            <v-card-text>
-              <h1 class="pb-3" style="color:red">{{ sms }}</h1>
-              <v-btn v-if="($user.id).toUpperCase() == SUPERADMIN" :loading="waiting" @click="deleter(formShow.id)" class="mb-4 pa-8"
-                block color="green" size="x-large">
-                <h2>ELIMINAR</h2>
-              </v-btn>
-            </v-card-text>
-          </v-card>
-        </center>
-      </v-card>
-    </v-dialog>
 
+    
   </div>
 </template>
 <script>
@@ -322,20 +203,51 @@ export default {
   name: "home",
   data() {
     return {
-      SUPERADMIN: "JCRIM",
-      waitForData:true,
       logoJcrim: require("@/assets/default/imgJcrim.png"),
       waitingGetData: false,
       cased: "",
       dialog: false,
-      dialogShow: false,
       sure: false,
       waiting: false,
       sms: "",
       dayConter: 0,
       getdataSchedule: [{ usedDay: "", status: "" }],
       selected: { dayWeek: "", day: "", hour: "" },
-      fieldsState: [],
+      fieldsState: [
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+        [{status:false, data:{}}, {status:false, data:{}}, {status:false, data:{}},{status:false, data:{}}],
+      ],
       fiscalies: ["SOLUCIONES RÁPIDAS", "PERSONAS Y GARANTÍAS", "PATRIMONIO CIUDADANO", "VIOLENCIA DE GÉNERO", "ADMINISTRACIÓN PÚBLICA", "ADOLESCENTES INFRACTORES", "DELINCUENCIA ORGANIZADA, TRANSNACIONAL E INTERNACIONAL", "FLAGRANCIA", "MULTICOMPETENTE", "DELITOS ACUÁTICOS", "ACCIDENTES DE TRÁNSITO", "OTRO"],
       fiscals: ["Alexander Hernan Apolo Vivanco", "Andrea Lucia Mendez Quintanilla",
         "Bolivar Enrique Figueroa Arevalo", "Carlos Augusto Franco León",
@@ -363,8 +275,7 @@ export default {
         "Sixto Cervilio Minga Sarango", "Vilma Elcira Gonzalez Cedillo",
         "Wilson Emiliano Cuenca Armijos", "OTROS"],
       etaps: ['INVESTIGACIÓN PREVIA', 'INSTRUCCIÓN FISCAL', 'OTROS'],
-      formReserver: { dateUsed: "", yearUsed: "", monthUsed: "", dayUsed: "", hourUsed: "", fiscalie: "", fiscal: "", nroOfice: "", etap: "", section: "pendiente", num: "", delit: "", evidence: "", info: "" },
-      formShow: { dateUsed: "", yearUsed: "", monthUsed: "", dayUsed: "", hourUsed: "", fiscalie: "", fiscal: "", nroOfice: "", etap: "", section: "pendiente", num: "", delit: "", evidence: "", info: "" },
+      formReserver: { userId: "",dateUsed: "", yearUsed: "", monthUsed: "", dayUsed: "", hourUsed: "", fiscalie: "", fiscal: "", nroOfice: "", etap: "", section: "pendiente", num: "", delit: "", evidence: "", info: "" },
       appAccess: {
         name: "sz7crimUser",
         password: "qwAS123",
@@ -392,13 +303,14 @@ export default {
     };
   },
   mounted() {
-    this.validUser()
-    this.initValFieldStatus()
     const fecha = new Date();
     this.state.year = fecha.getFullYear()
     this.state.month = fecha.getMonth() + 1
     this.state.day = fecha.getDate()
     this.state.dayWeek = fecha.getDay()
+    /* if (this.$user.id==null) {
+      this.$router.push({ name: "home" })
+    } */
     this.get()
   },
 
@@ -409,18 +321,6 @@ export default {
   },
   computed: {},
   methods: {
-    validUser() {
-      if (this.$user.id == null) {
-        this.$router.push({ name: "Inicio" })
-      }
-    },
-    initValFieldStatus() {
-      for (let index = 0; index < 50; index++) {
-        this.fieldsState.push(
-          [{ status: false, userId: null, data: {} }, { status: false, user: null, data: {} }, { status: false, user: null, data: {} }, { status: false, user: null, data: {} },],
-        )
-      }
-    },
     Actioncomponents(aux, data) {
       switch (aux) {
         case "alert":
@@ -437,33 +337,14 @@ export default {
       return aux
     },
     addCite(aux) {
-      this.sure = false
-      this.waiting = false
-      switch (aux) {
-        case "AVAILABLE":
-          this.dialog = true
-          break;
-        case "RESERVED":
-          var auxHour = this.formatHourIndex(this.selected.hour)
-          if ((this.$user.id).toUpperCase() == this.SUPERADMIN || this.$user.id == this.fieldsState[this.selected.day][auxHour].userId) {
-            this.formShow = this.fieldsState[this.selected.day][auxHour].data
-            this.dialogShow = true
-          }
-          break;
-        case "OCCUPIED":
-          if ((this.$user.id).toUpperCase() == this.SUPERADMIN) {
-            this.formShow = this.fieldsState[this.selected.day][this.formatHourIndex(this.selected.hour)].data
-            this.dialogShow = true
-          }
-          break;
-        default:
-          break;
+      if (aux == "DISP") {
+        this.sure = false
+        this.waiting = false
+        this.dialog = true
       }
     },
     save() {
-      this.validUser()
       this.waiting = true;
-      this.formReserver.userId = this.$user.id
       this.formReserver.dateUsed = this.selected.dayWeek + " " + this.selected.day + " DE " + this.calendar[this.state.year][this.state.month - 1].month + " DE " + this.state.year + " HORA: " + this.selected.hour
       this.formReserver.yearUsed = this.state.year
       this.formReserver.monthUsed = this.state.month
@@ -491,8 +372,9 @@ export default {
         });
     },
     async get() {
-      this.waitForData=true
       this.resetStatus()
+      console.log("in Get")
+      this.waitingGetData = true
       this.waiting = true
       this.sms = ""
       this.$http
@@ -501,6 +383,7 @@ export default {
           if (res.data) {
             if (res.data.schedule) {
               this.setStatus(res.data.schedule)
+              console.log(res.data.schedule)
               this.waiting = false
               this.dialog = false
             }
@@ -517,49 +400,30 @@ export default {
           this.waitingGetData = false
         });
     },
-    deleter(id){
-      this.sms = ""
-      this.waiting = true;
-      this.$http({
-        method: "PUT",
-        url: "/delete/"+id,
-        data: {
-          appAccess: this.appAccess
-        },
-      })
-        .then((res) => {
-          if (res.data.status=="deleted") {
-            this.dialogShow=false
-            this.get()
-            this.showNotification(res.data.status)
-          } else {
-            this.$function.alertIni("error", "Error, Vuelva a intentar")
-          }
-        })
-        .catch(() => { })
-        .finally(() => {
-          this.waiting = false;
-        });
-    },
     setStatus(auxData) {
       for (let index = 0; index < auxData.length; index++) {
+        //  console.log("principal:", auxData[index])
         for (let index2 = 0; index2 < this.hours.length; index2++) {
+          //    console.log("hourFor:", this.hours[index2])
           const hour = this.hours[index2];
+          //  console.log("hour:", hour)
+          //  console.log("hourUsed:",auxData[index].hourUsed)
           if (auxData[index].hourUsed == hour) {
-            this.fieldsState[auxData[index].dayUsed][index2].userId = auxData[index].userId
-            this.fieldsState[auxData[index].dayUsed][index2].status = true
+            //    console.log("hourTRUE")
+            //    console.log("FINISH:",this.fieldsState[auxData[index].dayUsed][index2])
             this.fieldsState[auxData[index].dayUsed][index2].data = auxData[index]
-          }
+            this.fieldsState[auxData[index].dayUsed][index2].status = true
+            //     console.log("FINISH:",this.fieldsState[auxData[index].dayUsed][index2])
+            //
+          } 
         }
+        //    console.log(auxData)
       }
-      this.waitForData=false
     },
     resetStatus() {
       for (let index = 0; index < this.fieldsState.length; index++) {
         for (let index2 = 0; index2 < this.hours.length; index2++) {
-          this.fieldsState[index][index2].user = null
           this.fieldsState[index][index2].status = false
-          this.fieldsState[index][index2].data = {}
         }
       }
     },
@@ -698,7 +562,6 @@ export default {
     showNotification(aux) {
       switch (aux) {
         case "created":
-          this.$function.alertIni("success", "CITA RESERVADA")
           this.get()
           break;
         case "updated":
@@ -726,23 +589,11 @@ export default {
           this.waiting = false
           this.sure = false
           break;
-          case "deleted":
-          this.$function.alertIni("success", "CITA ELIMINADA")
-          this.waiting = false
-          this.sure = false
-          break;
         default:
           break;
       }
 
     },
-    formatHourIndex(aux) {
-      for (let index = 0; index < this.hours.length; index++) {
-        if (this.hours[index] == aux) {
-          return index
-        }
-      }
-    }
 
   }
 }

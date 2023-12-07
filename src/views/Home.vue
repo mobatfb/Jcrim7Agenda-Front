@@ -12,7 +12,7 @@
         <br>
         <v-card-text>
           <v-text-field style="font-size: large;" class="centered-input" v-model="user" variant="outlined" label="Identificacion" outlined></v-text-field>
-          <v-btn  @click="goTo('Agenda')" class="mb-4 pa-8" block color="green" size="x-large">
+          <v-btn :disabled="user.length<4"  @click="goTo('Agenda')" class="mb-4 pa-8" block color="green" size="x-large">
             <h2>INGRESAR</h2>
           </v-btn>
         </v-card-text>
@@ -40,6 +40,7 @@ user:""
   computed: {},
   methods: {
     goTo(aux) {
+      this.$user.id=this.user
       this.$router.push({ name: aux })
     },
     contact() {

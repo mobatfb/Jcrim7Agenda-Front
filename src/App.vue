@@ -47,7 +47,7 @@ export default {
   name: "App",
   metaInfo: {
     title: "Jcrim7Apps",
-    titleTemplate: "%s  | Utilitarios",
+    titleTemplate: "%s  | Agenda",
     htmlAttrs: {
       lang: "es-EC",
     },
@@ -55,7 +55,7 @@ export default {
       { charset: "utf-8" },
       {
         name: "description",
-        content: "Jcrim7Apps | Utilitarios",
+        content: "Jcrim7Apps | Agenda",
       },
       {
         name: "keywords",

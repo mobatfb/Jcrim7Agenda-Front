@@ -173,8 +173,8 @@ export default {
                       "success",
                       "Bienvenido " + res.data.user.name
                     );
-                    this.$user.data=res.data.user;
-                    this.$user.name=res.data.user.name;
+                    //this.$user.data=res.data.user;
+                    //this.$user.name=res.data.user.name;
                     this.$datos.url = "Principal";
                     this.$datos.topic = 0;
                     this.$datos.seccion = 0;
