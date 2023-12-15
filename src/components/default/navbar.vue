@@ -4,7 +4,7 @@
         <div style="width: 100%">
         <span
           style="font-size: 22px; cursor:default"
-          >SZ7 UNIDAD DE CRIMINALÍSTICA</span>
+          >JEFATURA DE CRIMINALÍSTICA EL ORO</span>
     </div>
   </v-toolbar>
 </template>

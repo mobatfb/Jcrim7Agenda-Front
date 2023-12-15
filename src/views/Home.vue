@@ -2,16 +2,15 @@
   <div class="ma-1">
     <center>
 
-      <v-card class="mx-auto" elevation="1" max-width="400">
+      <v-card class="mx-auto" elevation="1" max-width="450">
         <v-img width="40%" style="margin: 3px;" :src="logoJcrim"></v-img>
         <v-card-text style="cursor:default" class="py-2 font-weight-black">
-          <h2 class="pa-3">UNIDAD DE CRIMINALÍSTICA</h2>
-          <h3 class="pa-3">TURNOS PARA PERICIAS</h3>
-          <h4>AUDIO, VIDEO Y AFINES</h4>
+          <h2 >JEFATURA DE CRIMINALÍSTICA EL ORO</h2>
+          <h3 class="pa-1">TURNOS PERICIAS</h3>
+          <h4>EXHIBICIÓN AVA</h4>
         </v-card-text>
-        <br>
         <v-card-text>
-          <v-text-field style="font-size: large;" class="centered-input" v-model="user" variant="outlined" label="Identificacion" outlined></v-text-field>
+          <v-text-field @keydown.enter="goTo('Agenda')" style="font-size: large;" class="centered-input" v-model="user" variant="outlined" label="Identificacion" outlined></v-text-field>
           <v-btn :disabled="user.length<4"  @click="goTo('Agenda')" class="mb-4 pa-8" block color="green" size="x-large">
             <h2>INGRESAR</h2>
           </v-btn>
@@ -23,7 +22,9 @@
 </template>
 <script>
 export default {
-  components: {},
+  components: {
+    
+  },
   name: "home",
   data() {
     return {
@@ -40,6 +41,9 @@ user:""
   computed: {},
   methods: {
     goTo(aux) {
+      if (this.user.length<4) {
+        return
+      }
       this.$user.id=this.user
       this.$router.push({ name: aux })
     },
@@ -49,7 +53,6 @@ user:""
     close() {
       this.dialog.news = false;
     },
-
     openDialog(aux, data) {
       this.dialog.data = data;
       this.close();

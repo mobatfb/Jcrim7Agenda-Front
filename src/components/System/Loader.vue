@@ -1,25 +1,17 @@
 <template>
-    <v-row v-show="show" class="loader">
+    <div style="height: 50vh;">
+        <v-row class="loader">
         <v-col class="text-center d-flex flex-column justify-center align-center">
-            <v-progress-circular color="primary" class="mb-3" indeterminate></v-progress-circular>
-            {{message}}
+            <v-progress-circular color="primary" class="mb-3"  indeterminate></v-progress-circular>
+            CARGANDO...
         </v-col>
     </v-row>
+    </div>
 </template>
 
 <script>
     export default {
         name: 'Loader',
-        props: {
-            show: {
-                type: Boolean,
-                default: false
-            },
-            message: {
-                type: String,
-                default: "Cargando..."
-            },
-        }
     }
 </script>
 
