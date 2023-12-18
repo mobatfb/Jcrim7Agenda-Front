@@ -1,11 +1,13 @@
 <template>
   <v-toolbar id="nav" outlined elevation="0" flat absolute dense width="100%">
-        <v-img @click="$router.push({ path: '/' })" width="40px" style="cursor:pointer; margin: 3px;" :src="logoJcrim"></v-img>
-        <div style="width: 100%">
-        <span
-          style="font-size: 22px; cursor:default"
-          >JEFATURA DE CRIMINALÍSTICA EL ORO</span>
+    <v-img width="40px" style="cursor:pointer; margin: 3px;"
+      :src="logoJcrim"></v-img>
+    <div style="width: 100%">
+      <span style="font-size: 22px; cursor:default">JEFATURA DE CRIMINALÍSTICA EL ORO</span>
     </div>
+    <v-btn v-if="$route.name=='Agenda'" small right style="background-color: red;" @click="$router.push({ path: '/' })">
+          <v-icon>mdi-close</v-icon>
+      </v-btn>
   </v-toolbar>
 </template>
 
@@ -28,7 +30,8 @@ export default {
   -webkit-text-stroke: 1px black;
   word-break: break-all;
 }
+
 #nav {
-  background-color: yellow;
+  background-color: #40cfff;
 }
 </style>

@@ -35,7 +35,7 @@ Vue.prototype.$function = { }
 Vue.prototype.$user = { id: null }
 Vue.prototype.$salesman = { name: 'Don Code', contact: '967267405' }
 Vue.prototype.$color = {
-  primary: '#FFC607',
+  primary: '#40cfff',
   secondary: '#1a1d48',
   accent: '#82B1FF',
   error: '#FF5252',

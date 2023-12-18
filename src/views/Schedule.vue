@@ -1,6 +1,16 @@
 <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
 <template>
   <div>
+    <v-fab-transition>
+      <v-btn absolute right text>
+        <v-btn label="Actualizar" :color="$color.primary" dark fab small @click="get()">
+          <v-icon>mdi-refresh</v-icon>
+        </v-btn>
+        <v-btn :color="$color.primary" dark fab small @click="asigDateSystem('state'); get()">
+          <v-icon>mdi-calendar-today</v-icon>
+        </v-btn>
+      </v-btn>
+    </v-fab-transition>
     <center>
       <table style=" margin-bottom: 3px;border:solid .5pt;">
         <table name="YEAR" cellspacing=0 cellpadding=0 style='margin-bottom: 5px; border-collapse:collapse;'>
@@ -45,14 +55,14 @@
           </tr>
         </table>
       </table>
-      <Loader v-if="waitForData" show message="''" />
+      <Loader v-if="waitForData" :smsWait="smsWait" />
       <div v-else style="overflow-x: scroll;
   overflow-y: scroll;
   width: 100%;height: 1000px;">
         <table name="SCHEDULE" class=tableMy style="cursor: default" border=1 cellspacing=0 cellpadding=0 width=1200px>
           <tr name="headerDaysWeek">
             <td v-for="day in daysWeek" v-show="day != 'SABADO' && day != 'DOMINGO'" :key="'Day:' + day" width=1000
-              class="tdMy" style="background-color: yellow;">
+              class="tdMy" style="background-color: rgba(64, 207, 255, 0.900);">
               <p style="margin: 0cm; font-size:small;" align=center><b>{{ day }}</b></p>
             </td>
           </tr>
@@ -65,7 +75,7 @@
                   cellpadding=0 style=' border-collapse:collapse; margin: 2px; width: 98%'>
                   <tr v-for="hour, index in hours" :key="'hour:' + hour" :name="'hour:' + hour">
                     <td v-if="hour == '09:00 - 10:00'" rowspan=4
-                      :style="mySystem.year == state.year && mySystem.month == state.month && ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start == mySystem.day ? 'background-color: yellow' : ''">
+                      :style="mySystem.year == state.year && mySystem.month == state.month && ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start == mySystem.day ? 'background-color: rgba(255, 255, 0, 0.900)' : ''">
                       <p align=center style='margin-bottom:0cm;text-align:center'>
                         {{ returnformatDay(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start)
                         }}
@@ -81,7 +91,7 @@
                     </td>
                     <td
                       v-else-if="fieldsState[((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start][index].status && fieldsState[((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start][index].userId.toUpperCase() == $user.id.toUpperCase()"
-                      style='background:yellow; border:solid 1.0pt'>
+                      style='background:rgba(255, 255, 0, 0.900); border:solid 1.0pt'>
                       <p style="cursor: pointer;margin: 0cm; cursor: pointer;font-size: small;"
                         @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start; selected.hour = hour; addCite('RESERVED')"
                         align=center><b>RESERVADO</b> </p>
@@ -105,7 +115,6 @@
                         @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start; selected.hour = hour; addCite('AVAILABLE')">
                         <b>DISPONIBLE</b>
                       </p>
-
                     </td>
                   </tr>
                 </table>
@@ -117,7 +126,7 @@
                   cellpadding=0 style=' border-collapse:collapse; margin: 2px; width: 98%'>
                   <tr v-for="hour, index in hours" :key="'hour:' + hour" :name="'hour:' + hour">
                     <td v-if="hour == '09:00 - 10:00'" rowspan=4
-                      :style="mySystem.year == state.year && mySystem.month == state.month && ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start == mySystem.day ? 'background-color: yellow' : ''">
+                      :style="mySystem.year == state.year && mySystem.month == state.month && ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start == mySystem.day ? 'background-color: #40cfff' : ''">
                       <p align=center style='margin-bottom:0cm;text-align:center'>
                         {{ returnformatDay(((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start)
                         }}
@@ -126,38 +135,37 @@
                     <td>
                       <p style="margin: 0cm; font-size: small" align=center><b>{{ hour }}</b></p>
                     </td>
-                    <td v-if="index == 3" style='background:rgb(0, 174, 255); border:solid 1.0pt'>
+                    <td v-if="index == 3" style='background:rgb(0, 174, 255, 0.900); border:solid 1.0pt'>
                       <p style="cursor: not-allowed;margin: 0cm;font-size: small;"
                         @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start; selected.hour = hour; addCite('PRIORITY')"
                         align=center><b>RESERVADO</b> </p>
                     </td>
                     <td
                       v-else-if="fieldsState[((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start][index].status && fieldsState[((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start][index].userId == $user.id"
-                      style='background:yellow; border:solid 1.0pt'>
+                      style='background:rgba(255, 255, 0, 0.900); border:solid 1.0pt'>
                       <p style="cursor: pointer;margin: 0cm; cursor: pointer;font-size: small;"
                         @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start; selected.hour = hour; addCite('RESERVED')"
                         align=center><b>RESERVADO</b> </p>
                     </td>
                     <td
                       v-else-if="fieldsState[((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start][index].status"
-                      style='background:#C00000; border:solid 1.0pt black;color:white;font-size: small'>
+                      style='background:rgba(192, 0, 0, 0.900); border:solid 1.0pt black;color:white;font-size: small'>
                       <p style="cursor: not-allowed;margin: 0cm;"
                         @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start; selected.hour = hour; addCite('OCCUPIED')"
                         align=center><b style="padding-left: 7px; padding-right: 7px;">{{ 'OCUPADO' }}</b> </p>
                     </td>
                     <td
                       v-else-if="(mySystem.year > state.year) || (state.year == mySystem.year && mySystem.month > state.month) || (state.year == mySystem.year && mySystem.month == state.month && mySystem.day >= ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start)"
-                      style='background:rgb(0, 174, 255);border:solid 1.0pt'>
+                      style='background:rgb(0, 174, 255,0.900);border:solid 1.0pt'>
                       <p style="cursor: not-allowed;margin: 0cm; font-size: small;" align=center>
                         <b>TERMINADO</b>
                       </p>
                     </td>
-                    <td v-else style='background:#00B050;border:solid 1.0pt'>
+                    <td v-else style='background:rgba(0, 176, 79, 0.900); border:solid 1.0pt'>
                       <p style="cursor: pointer;margin: 0cm; font-size: small;" align=center
                         @click="selected.dayWeek = daysWeek[campoS - 1]; selected.day = ((colS - 1) * 7) + (campoS + 1) - calendar[state.year][state.month - 1].start; selected.hour = hour; addCite('AVAILABLE')">
                         <b>DISPONIBLE</b>
                       </p>
-
                     </td>
                   </tr>
                 </table>
@@ -166,11 +174,10 @@
           </tr>
         </table>
       </div>
-
     </center>
     <!-- VENTANA DE AJUSTES EN DIALOGO -->
     <v-dialog v-model="dialog" persistent width="600px">
-      <v-card>
+      <v-card style="background-color: rgba(205, 255, 255, 0.956);">
         <v-toolbar color="primary" dense>
           <v-toolbar-title>RESERVAR CITA</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -186,7 +193,7 @@
             }}
               DE {{ state.year }} HORA: {{ selected.hour }}</h3>
           </v-card-text>
-          <v-card class="mx-auto" flat max-width="90%">
+          <v-card class="mx-auto" flat max-width="90%" style="background-color: transparent ;">
             <table cellspacing=0 cellpadding=0 style='border-collapse:collapse'>
               <tr>
                 <td width=141 style='padding-right:5px'>
@@ -199,7 +206,8 @@
                     <v-icon>mdi-magnify</v-icon>
                     <!-- VENTANA DE ELEGIR FISCALIA -->
                     <v-dialog v-model="dialogData.fiscalie" persistent width="500px">
-                      <v-card v-if="!dialogData.fiscalieNro" class="mx-auto">
+                      <v-card v-if="!dialogData.fiscalieNro" class="mx-auto"
+                        style="background-color: rgba(205, 255, 255, 0.956);">
                         <v-toolbar color="primary" dense width="100%">
                           <v-toolbar-title>LISTA DE FISCALIAS</v-toolbar-title>
                           <v-spacer></v-spacer>
@@ -209,22 +217,19 @@
                             </v-btn>
                           </v-toolbar-items>
                         </v-toolbar>
-                        <v-list>
+                        <v-list style="background-color:transparent">
                           <v-list-item v-for="(item, i) in fiscalies" :key="i" :value="item" color="primary" rounded="xl">
                             <v-list-item-title v-text="item">
                             </v-list-item-title>
                             <v-btn style="float: right;" color="" outlined icon
                               @click="fiscalieData.name = item; dialogData.fiscalieNro = true">
                               <v-icon>mdi-plus</v-icon>
-
-
                             </v-btn>
-
                           </v-list-item>
                         </v-list>
                       </v-card>
                       <!-- VENTANA DE ELEGIR NUMERO DE FISCALIA -->
-                      <v-card v-else class="mx-auto">
+                      <v-card v-else class="mx-auto" style="background-color: rgba(205, 255, 255, 0.956);">
                         <v-toolbar color="primary" dense width="100%">
                           <v-toolbar-title>NUMERO DE FISCALIA</v-toolbar-title>
                           <v-spacer></v-spacer>
@@ -234,7 +239,7 @@
                             </v-btn>
                           </v-toolbar-items>
                         </v-toolbar>
-                        <v-list>
+                        <v-list style="background-color:transparent">
                           <v-list-item v-for="(item, i) in 5" :key="'awwwwq' + i" :value="item" color="primary"
                             rounded="xl">
                             <v-list-item-title v-text="fiscalieData.name + ' ' + item">
@@ -243,7 +248,6 @@
                               @click="formReserver.fiscalie = fiscalieData.name + ' ' + item; dialogData.fiscalieNro = false; dialogData.fiscalie = false;">
                               <v-icon>mdi-plus</v-icon>
                             </v-btn>
-
                           </v-list-item>
                         </v-list>
                       </v-card>
@@ -262,7 +266,7 @@
                     <v-icon>mdi-magnify</v-icon>
                     <!-- VENTANA DE ELEGIR FISCAL -->
                     <v-dialog v-model="dialogData.fiscal" persistent width="500px">
-                      <v-card class="mx-auto">
+                      <v-card class="mx-auto" style="background-color: rgba(205, 255, 255, 0.956);">
                         <v-toolbar color="primary" dense width="100%">
                           <v-toolbar-title>LISTA DE FISCALES</v-toolbar-title>
                           <v-spacer></v-spacer>
@@ -272,7 +276,7 @@
                             </v-btn>
                           </v-toolbar-items>
                         </v-toolbar>
-                        <v-list>
+                        <v-list style="background-color:transparent">
                           <v-list-item v-for="(item, i) in fiscals" :key="i" :value="item" color="primary" rounded="xl">
                             <v-list-item-title v-text="item">
                             </v-list-item-title>
@@ -280,7 +284,6 @@
                               @click="formReserver.fiscal = item; dialogData.fiscal = false">
                               <v-icon>mdi-plus</v-icon>
                             </v-btn>
-
                           </v-list-item>
                         </v-list>
                       </v-card>
@@ -299,7 +302,7 @@
                     <v-icon>mdi-magnify</v-icon>
                     <!-- VENTANA DE ELEGIR ETAPA -->
                     <v-dialog v-model="dialogData.etap" persistent width="500px">
-                      <v-card class="mx-auto">
+                      <v-card class="mx-auto" style="background-color: rgba(205, 255, 255, 0.956);">
                         <v-toolbar color="primary" dense width="100%">
                           <v-toolbar-title>LISTA DE PROCESOS</v-toolbar-title>
                           <v-spacer></v-spacer>
@@ -309,7 +312,7 @@
                             </v-btn>
                           </v-toolbar-items>
                         </v-toolbar>
-                        <v-list>
+                        <v-list style="background-color:transparent">
                           <v-list-item v-for="(item, i) in etaps" :key="i" :value="item" color="primary" rounded="xl">
                             <v-list-item-title v-text="item">
                             </v-list-item-title>
@@ -336,7 +339,7 @@
                     <v-icon>mdi-magnify</v-icon>
                     <!-- VENTANA DE ELEGIR DELITO -->
                     <v-dialog v-model="dialogData.delit" persistent width="500px">
-                      <v-card class="mx-auto">
+                      <v-card class="mx-auto" style="background-color: rgba(205, 255, 255, 0.956);">
                         <v-toolbar color="primary" dense width="100%">
                           <v-toolbar-title>LISTA DE DELITOS</v-toolbar-title>
                           <v-spacer></v-spacer>
@@ -346,7 +349,7 @@
                             </v-btn>
                           </v-toolbar-items>
                         </v-toolbar>
-                        <v-list>
+                        <v-list style="background-color:transparent">
                           <v-list-item v-for="(item, i) in delits" :key="i" :value="item" color="primary" rounded="xl">
                             <v-list-item-title v-text="item">
                             </v-list-item-title>
@@ -402,8 +405,8 @@
             <v-card-text>
               <h1 class="pb-3" style="color:red">{{ sms }}</h1>
               <v-checkbox v-model="sure" label="ESTOY DE ACUERDO CON LA INFORMACIÓN INGRESADA."></v-checkbox>
-              <v-btn :disabled="!sure" :loading="waiting" @click="save()" class="mb-4 pa-8" block color="green"
-                size="x-large">
+              <v-btn :disabled="!sure" :loading="waiting" @click="save()" class="mb-4 pa-8" block
+                style="background-color: #40cfff" size="x-large">
                 <h2>GUARDAR</h2>
               </v-btn>
             </v-card-text>
@@ -413,7 +416,7 @@
     </v-dialog>
     <!-- VENTANA DE AJUSTES EN DIALOGO SHOW -->
     <v-dialog v-model="dialogShow" persistent width="600px">
-      <v-card>
+      <v-card style="background-color: rgba(205, 255, 255, 0.956);">
         <v-toolbar color="primary" dense>
           <v-toolbar-title>CITA RESERVADA POR: {{ formShow.userId }}</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -429,7 +432,7 @@
             }}
               DE {{ state.year }} HORA: {{ selected.hour }}</h3>
           </v-card-text>
-          <v-card class="mx-auto" flat max-width="90%">
+          <v-card class="mx-auto" flat max-width="90%" style="background-color: transparent;">
             <table cellspacing=0 cellpadding=0 style='border-collapse:collapse'>
               <tr>
                 <td width=141 style='padding-right:5px'>
@@ -515,9 +518,9 @@
             <br>
             <v-card-text v-if="($user.id).toUpperCase() == SUPERADMIN">
               <h1 class="pb-3" style="color:red">{{ sms }}</h1>
-              <v-checkbox  v-model="sure" label="ELIMINAR CITA RESERVADA"></v-checkbox>
-              <v-btn :disabled="!sure" :loading="waiting"
-                @click="deleter(formShow.id)" class="mb-4 pa-8" block color="green" size="x-large">
+              <v-checkbox v-model="sure" label="ELIMINAR CITA RESERVADA"></v-checkbox>
+              <v-btn :disabled="!sure" :loading="waiting" @click="deleter(formShow.id)" class="mb-4 pa-8" block
+                style="background-color:red" size="x-large">
                 <h2>ELIMINAR</h2>
               </v-btn>
             </v-card-text>
@@ -547,11 +550,13 @@ export default {
       sure: false,
       waiting: false,
       sms: "",
+      tryGet: 0,
+      smsWait: "Cargando...",
       dayConter: 0,
       getdataSchedule: [{ usedDay: "", status: "" }],
       selected: { dayWeek: "", day: "", hour: "" },
       fieldsState: [],
-      fiscalies: ["SOLUCIONES RÁPIDAS", "PERSONAS Y GARANTÍAS", "PATRIMONIO CIUDADANO", "VIOLENCIA DE GÉNERO", "ADMINISTRACIÓN PÚBLICA", "ADOLESCENTES INFRACTORES", "DELINCUENCIA ORGANIZADA, TRANSNACIONAL E INTERNACIONAL", "FLAGRANCIA", "MULTICOMPETENTE", "DELITOS ACUÁTICOS", "ACCIDENTES DE TRÁNSITO"],
+      fiscalies: ["SOLUCIONES RÁPIDAS", "PERSONAS Y GARANTÍAS", "PATRIMONIO CIUDADANO", "VIOLENCIA DE GÉNERO", "ADMINISTRACIÓN PÚBLICA", "ADOLESCENTES INFRACTORES", "DELINCUENCIA ORGANIZADA..FEDOTI", "FLAGRANCIA", "MULTICOMPETENTE", "DELITOS ACUÁTICOS", "ACCIDENTES DE TRÁNSITO"],
       fiscals: ["Alexander Hernan Apolo Vivanco", "Andrea Lucia Mendez Quintanilla",
         "Bolivar Enrique Figueroa Arevalo", "Carlos Augusto Franco León",
         "Carlos Julio Vera Chavez", "Christian Kerlin Ayala Piedra",
@@ -617,14 +622,8 @@ export default {
   mounted() {
     this.validUser()
     this.initValFieldStatus()
-    const fecha = new Date();
-    this.mySystem.year = fecha.getFullYear()
-    this.mySystem.month = fecha.getMonth() + 1
-    this.mySystem.day = fecha.getDate()
-    this.state.year = fecha.getFullYear()
-    this.state.month = fecha.getMonth() + 1
-    this.state.day = fecha.getDate()
-    this.state.dayWeek = fecha.getDay()
+    this.asigDateSystem('sys')
+    this.asigDateSystem('state')
     this.get()
   },
 
@@ -634,7 +633,31 @@ export default {
 
   },
   computed: {},
+  watch: {
+    dialog(nuevoValor) {
+      if (nuevoValor) {
+        console.log("camo true")
+      } else {
+        setTimeout(function () {
+          console.log("Hola Mundo");
+        }, 20000);
+      }
+    }
+  },
   methods: {
+    asigDateSystem(aux) {
+      const fecha = new Date();
+      if (aux == 'sys') {
+        this.mySystem.year = fecha.getFullYear()
+        this.mySystem.month = fecha.getMonth() + 1
+        this.mySystem.day = fecha.getDate()
+      } else {
+        this.state.year = fecha.getFullYear()
+        this.state.month = fecha.getMonth() + 1
+        this.state.day = fecha.getDate()
+        this.state.dayWeek = fecha.getDay()
+      }
+    },
     tested() {
       alert("yess")
     },
@@ -723,16 +746,25 @@ export default {
             this.$function.alertIni("error", "Error, Vuelva a intentar")
           }
         })
-        .catch(() => { })
+        .catch(() => {
+          this.$function.alertIni("error", "Error, Vuelva a intentar")
+        })
         .finally(() => {
           this.waiting = false;
         });
     },
-    async get() {
+    loopTime() {
+
+    },
+    get() {
       this.waitForData = true
       this.resetStatus()
+      this.asigDateSystem('sys')
       this.waiting = true
       this.sms = ""
+      if (this.tryGet == 0) {
+        this.smsWait = "Cargando..."
+      }
       this.$http
         .get("/read/" + this.state.month + "/" + this.state.year)
         .then((res) => {
@@ -741,6 +773,7 @@ export default {
               this.setStatus(res.data.schedule)
               this.waiting = false
               this.dialog = false
+              this.tryGet = 0
             }
           } else {
             this.showNotification("error")
@@ -748,8 +781,11 @@ export default {
           }
         })
         .catch(() => {
-          this.$function.alertIni("error", "Error. vuelva a intentar")
-          this.waiting = false
+          this.tryGet++
+          setTimeout(() => {
+            this.smsWait = "Cargando..., reintentando.." + this.tryGet
+            this.get()
+          }, 10000);
         })
         .finally(() => {
           this.waitingGetData = false
@@ -1028,4 +1064,5 @@ export default {
   border-radius: 2%;
   left: 10px;
   position: relative;
-}</style>
+}
+</style>

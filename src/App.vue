@@ -1,7 +1,7 @@
 <template>
-  <div id="app">
+  <div id="app" >
   <cnavbar style="position: fixed"></cnavbar>
-    <div class="loader" v-if="$store.getters.loader">
+    <div class="loader" v-if="$store.getters.loader" style="background-color: red; height: 100%;">
       <div class="d-flex justify-center align-center" style="height: 100vh">
         <Loader show message="''" />
       </div>
@@ -17,13 +17,25 @@
         </v-container>
       </v-content>
       <div v-else style="margin-top: 50px;">
+        <component
+        v-bind:is="background[Math.floor(Math.random() * background.length)].url"
+          :style="{
+            background: this.$route.params.id
+              ? '#cdffff'
+              : '#cdffff',
+            width: '100%',
+            height: '100%',
+            position: 'fixed',
+          }"
+        >
+        </component>
         <div style="height: 100%; width: 100%; position: fixed">
           <router-view />
         
         </div>
         <v-alert
         v-model="alertmodel.active"
-        style="position: fixed; width: 25%; top: 8%; left: 75%; z-index: 3"
+        style="position: fixed; width: 25%; top: 8%; left: 75%; z-index: 3;"
         shaped
         :type="alertmodel.type"
       >
@@ -74,10 +86,32 @@ export default {
   data() {
     return {
     
-      //imgInfo: require("@/assets/images/default/info.png"),
+      imgFondo: require("@/assets/default/bg.jpg"),
       auth: false,
       alertmodel: { active: false, type: "success", message: "" },
-
+      background: [
+        {
+          name: "Pure HTML CSS Animated Background",
+          url: () => import("./components/System/background0"),
+        },
+        {
+          name: "CSS Background Animation",
+          url: () => import("./components/System/background1"),
+        },
+        {
+          name: "Parallax Star Background in CSS",
+          url: () => import("./components/System/background2"),
+        },
+        {
+          name: "Sepion CSS Background Animation",
+          url: () => import("./components/System/background3"),
+        },
+        {
+          name: "HTML CSS Fireflies",
+          url: () => import("./components/System/background4"),
+        }
+        /*{ name: "null", url: () => import("./components/System/background5") }, */
+      ],
     };
   },
 
