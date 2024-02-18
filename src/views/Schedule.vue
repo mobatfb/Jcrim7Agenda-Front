@@ -673,10 +673,10 @@ export default {
         )
       }
     },
-    Actioncomponents(aux, data) {
+    Actioncomponents(aux, dataa) {
       switch (aux) {
         case "alert":
-          this.$function["alertIni"](data.status, data.sms);
+          this.$function["alertIni"](dataa.status, dataa.sms);
           break;
         default:
           break;
@@ -867,8 +867,8 @@ export default {
     close() {
       this.dialog.news = false;
     },
-    openDialog(aux, data) {
-      this.dialog.data = data;
+    openDialog(aux, datax) {
+      this.dialog.data = datax;
       this.close();
       switch (aux) {
         case "news":
